@@ -3,8 +3,19 @@ import ReviewCard from "@/components/ReviewCard";
 import ServiceCard from "@/components/ServiceCard";
 import { colors } from "@/constants/theme";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { hairdryer,scissorsHairComb } from "@lucide/lab";
 import { useRouter } from "expo-router";
-import { Star } from "lucide-react-native";
+import {
+  Bookmark,
+  ChevronLeft,
+  Icon,
+  MapPin,
+  MessageCircle,
+  Star,
+  Store,
+} from "lucide-react-native";
+
+import { useState } from "react";
 import {
   ImageBackground,
   ScrollView,
@@ -20,6 +31,8 @@ export default function UserPage() {
   const firstName = "Charles";
   const lastName = "Carmichael";
 
+  const [saved, setSaved] = useState(false);
+
   return (
     <SafeAreaView edges={[]} style={styles.container}>
       <ScrollView style={styles.scrollView}>
@@ -33,9 +46,11 @@ export default function UserPage() {
         <View style={styles.profileSection}>
           <View style={styles.tagsContainer}>
             <View style={styles.tag}>
+              <Icon iconNode={scissorsHairComb} size={14} color={colors.background} />
               <Text style={styles.tagText}>Barber</Text>
             </View>
             <View style={styles.tag}>
+              <Icon iconNode={hairdryer} size={14} color={colors.background} />
               <Text style={styles.tagText}>Stylist</Text>
             </View>
           </View>
@@ -51,10 +66,20 @@ export default function UserPage() {
                   {"\n"}
                   {lastName}
                 </Text>
-                <Text style={styles.profileSalon}>Harry's Salon</Text>
-                <Text style={styles.profileLocation}>
-                  Saint Paul, MN • 0.8 mi
-                </Text>
+                <View
+                  style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
+                >
+                  <Store size={14} color={colors.bodyText} />
+                  <Text style={styles.profileSalon}>Harry's Salon</Text>
+                </View>
+                <View
+                  style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
+                >
+                  <MapPin size={14} color={colors.bodyText} />
+                  <Text style={styles.profileLocation}>
+                    Saint Paul, MN • 0.8 mi
+                  </Text>
+                </View>
               </View>
             </View>
 
@@ -80,14 +105,17 @@ export default function UserPage() {
         </View>
 
         {/* Action Buttons */}
+        <TouchableOpacity style={styles.bookNowButton}>
+          <Text style={styles.bookNowButtonText}>Book Now</Text>
+        </TouchableOpacity>
+
         <View style={styles.actionRow}>
           <TouchableOpacity
             onPress={() => router.push("./message-modal")}
             style={styles.messageButton}
           >
-            <Text
-              style={styles.messageButtonText}
-            >{`Contact ${firstName}`}</Text>
+            <MessageCircle size={21} color={colors.headingText} />
+            <Text style={styles.messageButtonText}>{`Message`}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.socialButton}>
@@ -181,7 +209,27 @@ export default function UserPage() {
             message="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
           />
         ))}
+
+        <View style={styles.sectionHeaderContainer}>
+          <Text style={styles.sectionHeader}>Information</Text>
+        </View>
+
+        <View>
+          <View>
+            <Text>Studio</Text>
+            <Text></Text>
+          </View>
+        </View>
       </ScrollView>
+      <TouchableOpacity
+        style={[styles.floatingButton, { left: 15 }]}
+        onPress={() => router.back()}
+      >
+        <ChevronLeft size={30}/>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.floatingButton, { right: 15 }]}>
+        <Bookmark fill={saved ? colors.headingText : "transparent"} />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -196,7 +244,7 @@ const styles = StyleSheet.create({
   tagsContainer: {
     flexDirection: "row",
     paddingHorizontal: 20,
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   tag: {
     paddingVertical: 5,
@@ -204,6 +252,9 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: colors.primary,
     marginRight: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
   },
   tagText: { color: colors.background, fontWeight: "700", fontSize: 14 },
 
@@ -213,6 +264,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginHorizontal: 20,
     marginTop: 10,
+    marginBottom: 20,
     borderRadius: 25,
     backgroundColor: colors.background,
   },
@@ -257,15 +309,40 @@ const styles = StyleSheet.create({
   headerBoxSecondText: { fontSize: 14, color: colors.bodyText },
 
   actionRow: { flexDirection: "row", paddingHorizontal: 20, marginBottom: 15 },
-  messageButton: {
+  bookNowButton: {
     backgroundColor: colors.primary,
+    padding: 10,
+    height: 45,
+    borderRadius: 10,
+    marginHorizontal: 20,
+    marginBottom: 10,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  messageButton: {
+    backgroundColor: colors.background,
     padding: 10,
     borderRadius: 10,
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
     marginRight: 10,
+    borderWidth: 2,
+    borderColor: colors.cardBorder,
+    flexDirection: "row",
+    gap: 5,
   },
-  messageButtonText: { fontWeight: "600", fontSize: 16, color: "white" },
+  bookNowButtonText: {
+    fontWeight: "600",
+    fontSize: 16,
+    color: colors.background,
+  },
+  messageButtonText: {
+    fontWeight: "600",
+    fontSize: 16,
+    color: colors.headingText,
+  },
   socialButton: {
     width: 45,
     height: 45,
@@ -306,4 +383,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   aboutText: { color: colors.bodyText, padding: 15 },
+  floatingButton: {
+    position: "absolute",
+    top: 60,
+    backgroundColor: colors.background,
+    height: 50,
+    aspectRatio: 1,
+    borderRadius: 25,
+    justifyContent: "center",
+    alignItems: "center",
+    opacity: 0.75,
+  },
 });

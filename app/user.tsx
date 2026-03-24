@@ -1,201 +1,309 @@
-// import { Button } from "@react-navigation/elements";
+import CredentialCard from "@/components/CredentialCard";
+import ReviewCard from "@/components/ReviewCard";
+import ServiceCard from "@/components/ServiceCard";
+import { colors } from "@/constants/theme";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { useRouter } from "expo-router";
+import { Star } from "lucide-react-native";
 import {
+  ImageBackground,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-// import { ScrollView } from "react-native-reanimated/lib/typescript/Animated";
-import { Bookmark, ChevronLeft } from "lucide-react-native";
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function UserPage() {
+  const router = useRouter();
   const firstName = "Charles";
   const lastName = "Carmichael";
+
   return (
-    <ScrollView>
-      <View
-        style={{
-          width: "100%",
-          height: 250,
-          backgroundColor: "grey",
-          position: "relative",
-        }}
-      >
-        {/* <SafeAreaView> */}
-        <TouchableOpacity
-          style={[styles.topButton, { right: 0, marginRight: 20 }]}
-        >
-          <Bookmark />
-        </TouchableOpacity>
+    <SafeAreaView edges={[]} style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        {/* Header Image */}
+        <ImageBackground
+          source={require("@/assets/images/haircut1.jpg")}
+          style={styles.headerImage}
+        />
 
-        <TouchableOpacity
-          style={[styles.topButton, { left: 0, marginLeft: 20 }]}
-        >
-          <ChevronLeft />
-        </TouchableOpacity>
-        {/* </SafeAreaView> */}
-      </View>
+        {/* Tags and Profile Card */}
+        <View style={styles.profileSection}>
+          <View style={styles.tagsContainer}>
+            <View style={styles.tag}>
+              <Text style={styles.tagText}>Barber</Text>
+            </View>
+            <View style={styles.tag}>
+              <Text style={styles.tagText}>Stylist</Text>
+            </View>
+          </View>
 
-      <View
-        style={{
-          borderWidth: 1,
-          padding: 20,
-          margin: 20,
-          borderRadius: 25,
-          marginTop: -50,
-          backgroundColor: "white",
-        }}
-      >
-        <View style={{ flexDirection: "row", gap: 20 }}>
-          <View
-            style={{
-              aspectRatio: 1,
-              backgroundColor: "grey",
-              borderRadius: 10,
-            }}
-          />
+          <View style={styles.headerCard}>
+            <View style={styles.profileRow}>
+              <View style={styles.profilePicWrapper}>
+                <View style={styles.profilePicInner} />
+              </View>
+              <View>
+                <Text style={styles.profileName}>
+                  {firstName}
+                  {"\n"}
+                  {lastName}
+                </Text>
+                <Text style={styles.profileSalon}>Harry's Salon</Text>
+                <Text style={styles.profileLocation}>
+                  Saint Paul, MN • 0.8 mi
+                </Text>
+              </View>
+            </View>
 
-          <View>
-            <Text
-              style={{ fontWeight: "700", fontSize: 24 }}
-            >{`${firstName} ${lastName}`}</Text>
-            <Text>Barber • Stylist</Text>
-            <Text>Saint Paul, MN • 0.8 mi</Text>
+            {/* Stats */}
+            <View style={styles.headerBoxStatContainer}>
+              <View style={[styles.headerBox, styles.headerBoxBorder]}>
+                <View style={styles.statRow}>
+                  <Star fill={colors.headingText} size={14} />
+                  <Text style={styles.headerBoxMaintext}>4.9</Text>
+                </View>
+                <Text style={styles.headerBoxSecondText}>Rating</Text>
+              </View>
+              <View style={[styles.headerBox, styles.headerBoxBorder]}>
+                <Text style={styles.headerBoxMaintext}>8 yr</Text>
+                <Text style={styles.headerBoxSecondText}>Experience</Text>
+              </View>
+              <View style={styles.headerBox}>
+                <Text style={styles.headerBoxMaintext}>$$</Text>
+                <Text style={styles.headerBoxSecondText}>Price</Text>
+              </View>
+            </View>
           </View>
         </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            borderWidth: 1,
-            marginTop: 20,
-            borderRadius: 10,
-          }}
-        >
-          <View style={[styles.headerBox, { borderRightWidth: 1 }]}>
-            <Text style={styles.headerBoxMaintext}>4.9</Text>
-            <Text style={styles.headerBoxSecondText}>Rating</Text>
-          </View>
-          <View style={[styles.headerBox, { borderRightWidth: 1 }]}>
-            <Text style={styles.headerBoxMaintext}>8 yr</Text>
-            <Text style={styles.headerBoxSecondText}>Experience</Text>
-          </View>
-          <View style={styles.headerBox}>
-            <Text style={styles.headerBoxMaintext}>$$</Text>
-            <Text style={styles.headerBoxSecondText}>Price</Text>
-          </View>
-        </View>
-        <View style={{ marginTop: 20 }}>
-          <View
-            style={{
-              borderWidth: 1,
-              borderColor: "green",
-              // backgroundColor: "darkgreen",
-              paddingVertical: 4,
-              paddingHorizontal: 8,
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 5,
-              borderRadius: 8,
-              // width: "auto"
-              alignSelf: "flex-start",
-            }}
+        {/* Action Buttons */}
+        <View style={styles.actionRow}>
+          <TouchableOpacity
+            onPress={() => router.push("./message-modal")}
+            style={styles.messageButton}
           >
-            <View
-              style={{
-                height: 8,
-                aspectRatio: 1,
-                backgroundColor: "green",
-                borderRadius: 4,
-              }}
+            <Text
+              style={styles.messageButtonText}
+            >{`Contact ${firstName}`}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.socialButton}>
+            <FontAwesome5
+              name="facebook-f"
+              size={21}
+              color={colors.headingText}
             />
-            <Text style={{ color: "green", fontWeight: "600" }}>
-              Available Today
-            </Text>
-          </View>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialButton}>
+            <FontAwesome5
+              name="instagram"
+              size={21}
+              color={colors.headingText}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialButton}>
+            <FontAwesome5 name="tiktok" size={21} color={colors.headingText} />
+          </TouchableOpacity>
         </View>
-      </View>
-      <View style={{ paddingHorizontal: 20, flexDirection: "row" , gap: 10}}>
-        <TouchableOpacity style={styles.messageButton}>
-          <Text style={styles.messageButtonText}>{`Contact ${firstName}`}</Text>
-        </TouchableOpacity>
 
-        <TouchableOpacity style={styles.socialButton}>
-          <FontAwesome5 name="facebook-f" size={21} color="black" />
-        </TouchableOpacity>
+        {/* Work Section */}
+        <View style={styles.sectionHeaderContainer}>
+          <Text style={styles.sectionHeader}>{`${firstName}'s work`}</Text>
+          <TouchableOpacity onPress={() => router.push("./images-modal")}>
+            <Text style={styles.viewAllText}>View all</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.imageRow}
+        >
+          {[...Array(5)].map((_, i) => (
+            <View key={i} style={styles.imageWrapper}>
+              <View style={styles.imageBox} />
+            </View>
+          ))}
+        </ScrollView>
 
-        <TouchableOpacity style={styles.socialButton}>
-          <FontAwesome5 name="instagram" size={21} color="black" />
-        </TouchableOpacity>
+        {/* About Section */}
+        <View style={styles.sectionHeaderContainer}>
+          <Text style={styles.sectionHeader}>{`About ${firstName}`}</Text>
+        </View>
+        <View style={styles.aboutBox}>
+          <Text style={styles.aboutText}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
+          </Text>
+        </View>
 
-        <TouchableOpacity style={styles.socialButton}>
-          <FontAwesome5 name="tiktok" size={21} color="black" />
-        </TouchableOpacity>
-      </View>
-      <View>
-        {/* <Text>{`${firstName}'s work`}</Text> */}
-      </View>
-    </ScrollView>
+        {/* Credentials */}
+        <View style={styles.sectionHeaderContainer}>
+          <Text style={styles.sectionHeader}>Credentials</Text>
+        </View>
+        {[...Array(3)].map((_, i) => (
+          <CredentialCard
+            key={i}
+            title="Licensed Stylist"
+            org="Minnesota Board of Cosmotology"
+            year="2023"
+          />
+        ))}
+
+        {/* Services */}
+        <View style={styles.sectionHeaderContainer}>
+          <Text style={styles.sectionHeader}>Services & Pricing</Text>
+          <TouchableOpacity onPress={() => router.push("./services-modal")}>
+            <Text style={styles.viewAllText}>View all</Text>
+          </TouchableOpacity>
+        </View>
+        {[...Array(5)].map((_, i) => (
+          <ServiceCard key={i} title="Haircut" time="30 min" price={50} />
+        ))}
+
+        {/* Reviews */}
+        <View style={styles.sectionHeaderContainer}>
+          <Text style={styles.sectionHeader}>Reviews</Text>
+          <TouchableOpacity onPress={() => router.push("./reviews-modal")}>
+            <Text style={styles.viewAllText}>View all</Text>
+          </TouchableOpacity>
+        </View>
+        {[5, 2, 4].map((rating, i) => (
+          <ReviewCard
+            key={i}
+            user="Alexander S."
+            date="January 2026"
+            rating={rating}
+            message="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+          />
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  topButton: {
-    position: "absolute",
-    top: 70,
-    // right: 0,
-    backgroundColor: "white",
-    borderRadius: 20,
-    height: 40,
+  container: { flex: 1, backgroundColor: colors.background },
+  scrollView: { flex: 1 },
+  headerImage: { width: "100%", height: 250 },
+
+  profileSection: { marginTop: -75 },
+
+  tagsContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  tag: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 100,
+    backgroundColor: colors.primary,
+    marginRight: 10,
+  },
+  tagText: { color: colors.background, fontWeight: "700", fontSize: 14 },
+
+  headerCard: {
+    borderWidth: 2,
+    borderColor: colors.cardBorder,
+    padding: 20,
+    marginHorizontal: 20,
+    marginTop: 10,
+    borderRadius: 25,
+    backgroundColor: colors.background,
+  },
+  profileRow: { flexDirection: "row", gap: 20 },
+  profilePicWrapper: {
     aspectRatio: 1,
+    borderWidth: 3,
+    borderColor: colors.primary,
+    borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
-    // paddingVertical: 5,
-    // paddingHorizontal: 10,
-    // marginRight: 20
   },
-  tag: { paddingVertical: 5, paddingHorizontal: 10, borderRadius: 100 },
-  tagText: { color: "white", fontWeight: "700", fontSize: 12 },
+  profilePicInner: {
+    backgroundColor: "lightgrey",
+    width: "94%",
+    height: "94%",
+    borderRadius: 5,
+  },
+  profileName: { fontWeight: "700", fontSize: 21, color: colors.headingText },
+  profileSalon: { color: colors.bodyText, fontSize: 14, fontWeight: "500" },
+  profileLocation: { color: colors.bodyText, fontSize: 12 },
+
+  headerBoxStatContainer: {
+    flexDirection: "row",
+    marginTop: 30,
+    borderRadius: 10,
+    overflow: "hidden",
+  },
   headerBox: {
-    // backgroundColor: "lightgrey",
     flex: 1,
-    paddingVertical: 10,
-    // aspectRatio: 1,
-    // borderRadius: 20,
-    flexDirection: "column",
-    justifyContent: "center",
     alignItems: "center",
-    gap: 2,
-    // padding: 20
+    justifyContent: "center",
+    paddingVertical: 10,
   },
+  headerBoxBorder: { borderRightWidth: 1, borderColor: colors.cardBorder },
+  statRow: { flexDirection: "row", alignItems: "center", gap: 3 },
   headerBoxMaintext: {
     fontWeight: "600",
     fontSize: 20,
+    color: colors.headingText,
   },
-  headerBoxSecondText: {
-    fontSize: 14,
-  },
+  headerBoxSecondText: { fontSize: 14, color: colors.bodyText },
+
+  actionRow: { flexDirection: "row", paddingHorizontal: 20, marginBottom: 15 },
   messageButton: {
-    backgroundColor: "lightgrey",
+    backgroundColor: colors.primary,
     padding: 10,
     borderRadius: 10,
     flex: 1,
-    alignItems: "center"
+    alignItems: "center",
+    marginRight: 10,
   },
-  messageButtonText: {
-    fontWeight: "600",
-    fontSize: 16,
-  },
+  messageButtonText: { fontWeight: "600", fontSize: 16, color: "white" },
   socialButton: {
-    // backgroundColor: "lightgrey",
-    aspectRatio: 1,
+    width: 45,
+    height: 45,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-    borderWidth: 1,
-    backgroundColor: "white"
-
+    borderWidth: 2,
+    borderColor: colors.cardBorder,
+    backgroundColor: colors.background,
+    marginRight: 10,
   },
+
+  sectionHeaderContainer: {
+    paddingHorizontal: 20,
+    marginTop: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+    marginBottom: 10,
+  },
+  sectionHeader: { fontWeight: "600", fontSize: 18, color: colors.headingText },
+  viewAllText: { color: colors.bodyText },
+
+  imageRow: { paddingHorizontal: 20 },
+  imageWrapper: { marginRight: 10 },
+  imageBox: {
+    backgroundColor: "grey",
+    height: 200,
+    aspectRatio: 3 / 4,
+    borderRadius: 20,
+  },
+
+  aboutBox: {
+    marginHorizontal: 20,
+    borderWidth: 2,
+    borderColor: colors.cardBorder,
+    borderRadius: 15,
+    marginBottom: 10,
+  },
+  aboutText: { color: colors.bodyText, padding: 15 },
 });

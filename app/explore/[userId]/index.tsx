@@ -3,7 +3,7 @@ import ReviewCard from "@/components/ReviewCard";
 import ServiceCard from "@/components/ServiceCard";
 import { colors } from "@/constants/theme";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { hairdryer,scissorsHairComb } from "@lucide/lab";
+import { hairdryer, scissorsHairComb } from "@lucide/lab";
 import { useRouter } from "expo-router";
 import {
   Bookmark,
@@ -46,7 +46,11 @@ export default function UserPage() {
         <View style={styles.profileSection}>
           <View style={styles.tagsContainer}>
             <View style={styles.tag}>
-              <Icon iconNode={scissorsHairComb} size={14} color={colors.background} />
+              <Icon
+                iconNode={scissorsHairComb}
+                size={14}
+                color={colors.background}
+              />
               <Text style={styles.tagText}>Barber</Text>
             </View>
             <View style={styles.tag}>
@@ -211,21 +215,32 @@ export default function UserPage() {
         ))}
 
         <View style={styles.sectionHeaderContainer}>
-          <Text style={styles.sectionHeader}>Information</Text>
+          <Text style={styles.sectionHeader}>Information & Contact</Text>
         </View>
 
-        <View>
-          <View>
-            <Text>Studio</Text>
-            <Text></Text>
+        <View style={styles.infoContainer}>
+          <View style={styles.topInfoContainer}>
+            <Text style={styles.infoTextHeader}>Studio</Text>
+            <Text
+              style={styles.infoTextBody}
+            >{`1234 Main St. \nSaint Paul, MN 55116`}</Text>
           </View>
+          <View style={styles.topInfoContainer}>
+            <Text style={styles.infoTextHeader}>Payment</Text>
+            <Text style={styles.infoTextBody}>Card • Cash • Venmo</Text>
+          </View>
+        </View>
+        <View style={styles.contactContainer}>
+          <Text style={styles.infoTextHeader}>Contact</Text>
+          <Text style={styles.infoTextBody}>charles.carmichael@harry.com</Text>
+          <Text style={styles.infoTextBody}>{"(651)-345-8970"}</Text>
         </View>
       </ScrollView>
       <TouchableOpacity
         style={[styles.floatingButton, { left: 15 }]}
         onPress={() => router.back()}
       >
-        <ChevronLeft size={30}/>
+        <ChevronLeft size={30} />
       </TouchableOpacity>
       <TouchableOpacity style={[styles.floatingButton, { right: 15 }]}>
         <Bookmark fill={saved ? colors.headingText : "transparent"} />
@@ -235,6 +250,13 @@ export default function UserPage() {
 }
 
 const styles = StyleSheet.create({
+  gradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: "60%",
+  },
   container: { flex: 1, backgroundColor: colors.background },
   scrollView: { flex: 1 },
   headerImage: { width: "100%", height: 250 },
@@ -393,5 +415,35 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     opacity: 0.75,
+  },
+  infoContainer: {
+    flexDirection: "row",
+    marginHorizontal: 20,
+    gap: 10,
+  },
+  topInfoContainer: {
+    borderWidth: 2,
+    borderColor: colors.cardBorder,
+    flex: 1,
+    padding: 15,
+    borderRadius: 15,
+  },
+  infoTextHeader: {
+    fontWeight: "700",
+    fontSize: 16,
+    color: colors.headingText,
+    marginBottom: 5,
+  },
+  infoTextBody: {
+    color: colors.bodyText,
+  },
+  contactContainer: {
+    borderWidth: 2,
+    borderColor: colors.cardBorder,
+    marginTop: 10,
+    borderRadius: 15,
+    marginHorizontal: 20,
+    padding: 15,
+    marginBottom: 20,
   },
 });

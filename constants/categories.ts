@@ -1,3 +1,7 @@
+// ─────────────────────────────────────────────
+// Types
+// ─────────────────────────────────────────────
+
 export type CategoryName =
   | "Hair"
   | "Makeup"
@@ -10,15 +14,17 @@ export type CategoryName =
   | "Wellness";
 
 export type Category = {
-  name: CategoryName;
   occupations: string[];
   services: string[];
   specializations: Record<string, string[]>;
 };
 
-export const ServiceCategories: Category[] = [
-  {
-    name: "Hair",
+// ─────────────────────────────────────────────
+// Data (keyed by CategoryName for O(1) lookup)
+// ─────────────────────────────────────────────
+
+export const ServiceCategories: Record<CategoryName, Category> = {
+  Hair: {
     occupations: [
       "Hair Stylist",
       "Cosmetologist",
@@ -82,8 +88,8 @@ export const ServiceCategories: Category[] = [
       occasion: ["Bridal & Updo", "Editorial & Runway", "Men's Grooming"],
     },
   },
-  {
-    name: "Makeup",
+
+  Makeup: {
     occupations: ["Makeup Artist"],
     services: [
       "Full Glam",
@@ -143,8 +149,8 @@ export const ServiceCategories: Category[] = [
       ],
     },
   },
-  {
-    name: "Skincare",
+
+  Skincare: {
     occupations: ["Esthetician", "Medical Esthetician"],
     services: [
       "Classic Facial",
@@ -217,8 +223,8 @@ export const ServiceCategories: Category[] = [
       ],
     },
   },
-  {
-    name: "Lashes & Brows",
+
+  "Lashes & Brows": {
     occupations: ["Lash Technician", "Brow Artist"],
     services: [
       "Classic Lash Extensions",
@@ -288,8 +294,8 @@ export const ServiceCategories: Category[] = [
       ],
     },
   },
-  {
-    name: "Nails",
+
+  Nails: {
     occupations: ["Nail Technician", "Manicurist", "Pedicurist"],
     services: [
       "Manicure (regular, gel, shellac)",
@@ -356,8 +362,8 @@ export const ServiceCategories: Category[] = [
       ],
     },
   },
-  {
-    name: "Hair Removal",
+
+  "Hair Removal": {
     occupations: [
       "Wax Specialist",
       "Esthetician",
@@ -417,8 +423,8 @@ export const ServiceCategories: Category[] = [
       ],
     },
   },
-  {
-    name: "PMU",
+
+  PMU: {
     occupations: ["PMU Artist", "Cosmetic Tattoo Artist"],
     services: [
       "Microblading",
@@ -486,8 +492,8 @@ export const ServiceCategories: Category[] = [
       ],
     },
   },
-  {
-    name: "Tattoo & Piercing",
+
+  "Tattoo & Piercing": {
     occupations: ["Tattoo Artist", "Piercer"],
     services: [
       "Custom Tattoo",
@@ -557,8 +563,8 @@ export const ServiceCategories: Category[] = [
       ],
     },
   },
-  {
-    name: "Wellness",
+
+  Wellness: {
     occupations: ["Massage Therapist", "Bodywork Practitioner"],
     services: [
       "Swedish Massage",
@@ -623,4 +629,37 @@ export const ServiceCategories: Category[] = [
       ],
     },
   },
-] as const;
+};
+
+// ─────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────
+
+/** All category names in definition order */
+export const CategoryNames = Object.keys(ServiceCategories) as CategoryName[];
+
+/** Occupations for a given category */
+export const getOccupations = (category: CategoryName): string[] =>
+  ServiceCategories[category].occupations;
+
+/** Services for a given category */
+export const getServices = (category: CategoryName): string[] =>
+  ServiceCategories[category].services;
+
+/** All specialization group keys for a given category e.g. ["genderIdentity", "textureType", ...] */
+export const getSpecializationKeys = (category: CategoryName): string[] =>
+  Object.keys(ServiceCategories[category].specializations);
+
+/** Options for a specific specialization group */
+export const getSpecializations = (
+  category: CategoryName,
+  key: string
+): string[] => ServiceCategories[category].specializations[key] ?? [];
+
+/** All specializations as an array of { key, options } — useful for rendering a full picker */
+export const getSpecializationGroups = (
+  category: CategoryName
+): { key: string; options: string[] }[] =>
+  Object.entries(ServiceCategories[category].specializations).map(
+    ([key, options]) => ({ key, options })
+  );

@@ -6,7 +6,9 @@ const ExploreLayout = () => {
   return (
     <Stack>
       <Stack.Screen name="index" options={{headerShown: false}}/>
-      <Stack.Screen name="[userId]" options={{headerShown: false}}/>
+      <Stack.Screen name="[proId]" options={{headerShown: false}}/>
+      <Stack.Screen name="explore-filter" options={{headerShown: false, presentation: 'modal'}}/>
+
     </Stack>
   )
 }

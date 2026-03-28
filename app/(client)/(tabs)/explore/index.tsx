@@ -6,7 +6,6 @@ import { useRouter } from "expo-router";
 import { ListFilter, Search } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
-  Button,
   FlatList,
   ScrollView,
   StyleSheet,
@@ -25,9 +24,8 @@ export default function ExplorePage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [professionals, setProfessionals] = useState<{ id: string }[]>([]);
   const [headerHeight, setHeaderHeight] = useState(0);
-  const location = "Saint Paul, MN";
   const inset = useSafeAreaInsets();
-  console.log(selectedCategory);
+  // console.log(selectedCategory);
 
   useEffect(() => {
     getProfessionals();
@@ -41,18 +39,16 @@ export default function ExplorePage() {
     if (data) setProfessionals(data);
   }
 
-  console.log(professionals);
+  // console.log(professionals);
 
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
-      <View
-        style={[styles.scrollView, { }]}
-        // showsVerticalScrollIndicator={false}
-      >
+      <View style={styles.scrollView}>
         <FlatList
           style={[styles.scrollView, { paddingTop: headerHeight }]}
           data={professionals}
           keyExtractor={(pro) => pro.id}
+          showsVerticalScrollIndicator={false}
           renderItem={({ item }) => <ExploreCard proId={item.id} />}
           ListHeaderComponent={() => (
             <View style={styles.sectionHeaderContainer}>
@@ -62,24 +58,7 @@ export default function ExplorePage() {
               </TouchableOpacity>
             </View>
           )}
-          ListFooterComponent={() => (
-            <Button
-              title="user page"
-              onPress={() => router.push("/explore/1")}
-            />
-          )}
         />
-
-        {/* <ExploreCard />
-        <ExploreCard />
-        <ExploreCard />
-        <ExploreCard />
-        <ExploreCard />
-        <ExploreCard />
-        <ExploreCard />
-        <ExploreCard /> */}
-
-        {/* <Button title="user page" onPress={() => router.push("/explore/1")} /> */}
       </View>
       <View
         style={[styles.pageHeader, { top: inset.top }]}
@@ -111,6 +90,7 @@ export default function ExplorePage() {
               justifyContent: "center",
               alignItems: "center",
             }}
+            onPress={() => router.push('/explore/explore-filter')}
           >
             <ListFilter size={21} color={colors.background} />
           </TouchableOpacity>

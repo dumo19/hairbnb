@@ -1,5 +1,6 @@
 import { colors } from "@/constants/theme";
 import { supabase } from "@/lib/supabase";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { BadgeCheck, Star } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
@@ -8,26 +9,28 @@ import SpecializationTag from "./SpecializationTag";
 
 const ExploreCard = ({ proId }: { proId: string }) => {
   const [picWidth, setPicWidth] = useState(0);
+  const [username, setUsername] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
 
   const router = useRouter();
 
   useEffect(() => {
-    fetchProfessionalData()
+    fetchProfessionalData();
   }, []);
 
   async function fetchProfessionalData() {
     const { data, error } = await supabase
       .from("profiles")
-      .select("first_name, last_name")
+      .select("username, first_name, last_name")
       .eq("id", proId)
       .single();
-    
+
     if (error) {
       throw new Error(error.message);
     }
     if (data) {
+      setUsername(data.username);
       setFirstName(data.first_name);
       setLastName(data.last_name);
     }
@@ -36,25 +39,24 @@ const ExploreCard = ({ proId }: { proId: string }) => {
   return (
     <TouchableOpacity
       style={styles.cardContainer}
-      onPress={() => router.push("/(client)/(tabs)/explore/1")}
+      onPress={() => router.push(`/explore/${proId}`)}
     >
       <View style={styles.profileRow}>
         <View
-          style={styles.profilePicWrapper}
+          style={styles.wrapper}
           onLayout={(e) => setPicWidth(e.nativeEvent.layout.width)}
         >
-          {/* <View style={styles.profilePicInner} /> */}
-          <View
-            style={{
-              position: "absolute",
-              backgroundColor: colors.primary,
-              padding: 3,
-              borderRadius: 5,
-              bottom: -8,
-              right: -8,
-            }}
-          >
-            <BadgeCheck size={14} color={colors.background} />
+          {/* Image container (clipped) */}
+          <View style={styles.imageContainer}>
+            <Image
+              source={require("@/assets/images/profile-pic.webp")}
+              style={styles.image}
+            />
+          </View>
+
+          {/* Badge (NOT clipped) */}
+          <View style={styles.badge}>
+            <BadgeCheck size={12} color={colors.background} />
           </View>
         </View>
         <View style={{ gap: 3 }}>
@@ -114,6 +116,35 @@ const ExploreCard = ({ proId }: { proId: string }) => {
 export default ExploreCard;
 
 const styles = StyleSheet.create({
+  wrapper: {
+    // width: 80,
+    aspectRatio: 1,
+    position: "relative",
+  },
+
+  imageContainer: {
+    flex: 1,
+    borderRadius: 10,
+    overflow: "hidden",
+    borderWidth: 3,
+    borderColor: colors.primary,
+    padding: 2,
+  },
+
+  image: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 7,
+  },
+
+  badge: {
+    position: "absolute",
+    bottom: -5,
+    right: -5,
+    backgroundColor: colors.primary,
+    padding: 3,
+    borderRadius: 6,
+  },
   cardContainer: {
     borderWidth: 2,
     borderColor: colors.cardBorder,

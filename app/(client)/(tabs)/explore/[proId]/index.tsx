@@ -17,7 +17,8 @@ import {
   Store,
 } from "lucide-react-native";
 
-import { useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   ImageBackground,
   ScrollView,
@@ -27,13 +28,41 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { supabase } from "@/lib/supabase";
 
 export default function UserPage() {
   const router = useRouter();
-  const firstName = "Charles";
-  const lastName = "Carmichael";
+  const { proId } = useLocalSearchParams();
+  // const firstName = "Charles";
+  // const lastName = "Carmichael";
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  
 
   const [saved, setSaved] = useState(false);
+
+  // console.log(proId)
+
+  useEffect(() => {
+    fetchProfessionalData();
+  }, []);
+
+  async function fetchProfessionalData() {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("first_name, last_name")
+      .eq("id", proId)
+      .single();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+    if (data) {
+      // setUsername(data.username);
+      setFirstName(data.first_name);
+      setLastName(data.last_name);
+    }
+  }
 
   return (
     <SafeAreaView edges={[]} style={styles.container}>
@@ -286,16 +315,16 @@ const styles = StyleSheet.create({
   imageContainer: {
     flex: 1,
     borderRadius: 10,
-    overflow: "hidden", // 👈 ONLY here
+    overflow: "hidden",
     borderWidth: 3,
     borderColor: colors.primary,
-    padding: 2
+    padding: 2,
   },
 
   image: {
     width: "100%",
     height: "100%",
-    borderRadius: 7
+    borderRadius: 7,
   },
 
   badge: {

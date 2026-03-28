@@ -1,6 +1,6 @@
 import { colors } from "@/constants/theme";
 import { scissorsHairComb } from "@lucide/lab";
-import { Icon } from "lucide-react-native";
+import { FileBadge, Icon } from "lucide-react-native";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function CredentialCard({
@@ -16,7 +16,7 @@ export default function CredentialCard({
     <View style={styles.container}>
       <View style={{ flexDirection: "row" }}>
         <View style={styles.iconContainer}>
-          <Icon iconNode={scissorsHairComb} color={colors.primary}/>
+          <FileBadge color={colors.primary}/>
         </View>
         <View style={styles.textContainer}>
           <View style={{ flexDirection: "column", flex: 1, marginRight: 10 }}>

@@ -1,6 +1,6 @@
 import { colors } from "@/constants/theme";
 import { scissorsHairComb } from "@lucide/lab";
-import { Icon } from "lucide-react-native";
+import { Icon, Scissors } from "lucide-react-native";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function ServiceCard({
@@ -18,7 +18,7 @@ export default function ServiceCard({
     <View style={styles.container}>
       <View style={{ flexDirection: "row" }}>
         <View style={styles.iconContainer}>
-          <Icon iconNode={scissorsHairComb} color={colors.primary} />
+          <Scissors color={colors.primary} />
         </View>
         <View style={styles.textContainer}>
           <View style={styles.leftTextContainer}>

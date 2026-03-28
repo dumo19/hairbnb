@@ -25,8 +25,8 @@ export default function ReviewCard({
             <Star
               key={i}
               size={16}
-              color={colors.bodyText}
-              fill={colors.bodyText}
+              color={colors.primary}
+              fill={colors.primary}
               style={styles.star}
             />
           ))}

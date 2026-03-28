@@ -1,37 +1,16 @@
-import { Tabs } from "expo-router";
-import { CircleUserRound, Compass, Home, MessageCircle } from "lucide-react-native";
+import { Stack } from "expo-router";
+import React from "react";
+import { StyleSheet } from "react-native";
 
-export default function RootLayout() {
+const RootLayout = () => {
   return (
-    <Tabs>
-      <Tabs.Screen
-        name="index"
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Home color={color} size={size}/>
-          ),
-          title: "home"
-        }}
-      />
-      <Tabs.Screen name="explore" options={{
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Compass color={color} size={size}/>
-          ),
-        }} />
-        <Tabs.Screen name="messages" options={{
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <MessageCircle color={color} size={size}/>
-          ),
-        }} />
-      <Tabs.Screen name="account" options={{
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <CircleUserRound color={color} size={size}/>
-          ),
-        }} />
-    </Tabs>
+    <Stack screenOptions={{headerShown: false}}>
+      {/* <Stack.Screen name="index" /> */}
+      <Stack.Screen name="(client)" />
+    </Stack>
   );
-}
+};
+
+export default RootLayout;
+
+const styles = StyleSheet.create({});

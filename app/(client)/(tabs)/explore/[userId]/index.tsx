@@ -1,14 +1,16 @@
+import CategoryCard from "@/components/CategoryCard";
 import CredentialCard from "@/components/CredentialCard";
 import ReviewCard from "@/components/ReviewCard";
 import ServiceCard from "@/components/ServiceCard";
+import SpecializationTag from "@/components/SpecializationTag";
 import { colors } from "@/constants/theme";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { hairdryer, scissorsHairComb } from "@lucide/lab";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import {
+  BadgeCheck,
   Bookmark,
   ChevronLeft,
-  Icon,
   MapPin,
   MessageCircle,
   Star,
@@ -45,24 +47,25 @@ export default function UserPage() {
         {/* Tags and Profile Card */}
         <View style={styles.profileSection}>
           <View style={styles.tagsContainer}>
-            <View style={styles.tag}>
-              <Icon
-                iconNode={scissorsHairComb}
-                size={14}
-                color={colors.background}
-              />
-              <Text style={styles.tagText}>Barber</Text>
-            </View>
-            <View style={styles.tag}>
-              <Icon iconNode={hairdryer} size={14} color={colors.background} />
-              <Text style={styles.tagText}>Stylist</Text>
-            </View>
+            <CategoryCard category="Hair" />
+            <CategoryCard category="Wellness" />
           </View>
 
           <View style={styles.headerCard}>
             <View style={styles.profileRow}>
-              <View style={styles.profilePicWrapper}>
-                <View style={styles.profilePicInner} />
+              <View style={styles.wrapper}>
+                {/* Image container (clipped) */}
+                <View style={styles.imageContainer}>
+                  <Image
+                    source={require("@/assets/images/profile-pic.webp")}
+                    style={styles.image}
+                  />
+                </View>
+
+                {/* Badge (NOT clipped) */}
+                <View style={styles.badge}>
+                  <BadgeCheck size={14} color={colors.background} />
+                </View>
               </View>
               <View>
                 <Text style={styles.profileName}>
@@ -164,13 +167,34 @@ export default function UserPage() {
         <View style={styles.sectionHeaderContainer}>
           <Text style={styles.sectionHeader}>{`About ${firstName}`}</Text>
         </View>
-        <View style={styles.aboutBox}>
-          <Text style={styles.aboutText}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
-          </Text>
+        {/* <View style={styles.aboutBox}> */}
+        <Text style={styles.aboutText}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat.
+        </Text>
+        {/* </View> */}
+
+        <View style={styles.sectionHeaderContainer}>
+          <Text style={styles.sectionHeader}>Specializations</Text>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            paddingHorizontal: 20,
+            gap: 5,
+          }}
+        >
+          <SpecializationTag title="Haircut" />
+          <SpecializationTag title="Haircut" />
+          <SpecializationTag title="Men" />
+          <SpecializationTag title="Curly Hair" />
+          <SpecializationTag title="Haircut" />
+          <SpecializationTag title="Haircut" />
+          <SpecializationTag title="Haircut" />
         </View>
 
         {/* Credentials */}
@@ -193,7 +217,7 @@ export default function UserPage() {
             <Text style={styles.viewAllText}>View all</Text>
           </TouchableOpacity>
         </View>
-        {[...Array(5)].map((_, i) => (
+        {[...Array(3)].map((_, i) => (
           <ServiceCard key={i} title="Haircut" time="30 min" price={50} />
         ))}
 
@@ -242,7 +266,10 @@ export default function UserPage() {
       >
         <ChevronLeft size={30} />
       </TouchableOpacity>
-      <TouchableOpacity style={[styles.floatingButton, { right: 15 }]}>
+      <TouchableOpacity
+        onPress={() => setSaved(!saved)}
+        style={[styles.floatingButton, { right: 15 }]}
+      >
         <Bookmark fill={saved ? colors.headingText : "transparent"} />
       </TouchableOpacity>
     </SafeAreaView>
@@ -250,6 +277,35 @@ export default function UserPage() {
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    width: 80,
+    aspectRatio: 1,
+    position: "relative",
+  },
+
+  imageContainer: {
+    flex: 1,
+    borderRadius: 10,
+    overflow: "hidden", // 👈 ONLY here
+    borderWidth: 3,
+    borderColor: colors.primary,
+    padding: 2
+  },
+
+  image: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 7
+  },
+
+  badge: {
+    position: "absolute",
+    bottom: -8,
+    right: -8,
+    backgroundColor: colors.primary,
+    padding: 4,
+    borderRadius: 6,
+  },
   gradient: {
     position: "absolute",
     bottom: 0,
@@ -267,6 +323,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 20,
     // marginBottom: 10,
+    gap: 10,
   },
   tag: {
     paddingVertical: 5,
@@ -298,12 +355,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "lightgrey",
+    overflow: "hidden",
   },
   profilePicInner: {
     backgroundColor: "lightgrey",
-    width: "94%",
-    height: "94%",
+    width: "100%",
+    height: "100%",
     borderRadius: 5,
+    overflow: "hidden",
   },
   profileName: { fontWeight: "700", fontSize: 21, color: colors.headingText },
   profileSalon: { color: colors.bodyText, fontSize: 14, fontWeight: "500" },
@@ -388,12 +448,12 @@ const styles = StyleSheet.create({
   sectionHeader: { fontWeight: "600", fontSize: 18, color: colors.headingText },
   viewAllText: { color: colors.bodyText },
 
-  imageRow: { paddingHorizontal: 20 },
-  imageWrapper: { marginRight: 10 },
+  imageRow: { paddingHorizontal: 20, gap: 10 },
+  imageWrapper: {},
   imageBox: {
     backgroundColor: "grey",
-    height: 200,
-    aspectRatio: 3 / 4,
+    height: 300,
+    aspectRatio: 1,
     borderRadius: 20,
   },
 
@@ -404,7 +464,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginBottom: 10,
   },
-  aboutText: { color: colors.bodyText, padding: 15 },
+  aboutText: { color: colors.bodyText, paddingHorizontal: 20 },
   floatingButton: {
     position: "absolute",
     top: 60,

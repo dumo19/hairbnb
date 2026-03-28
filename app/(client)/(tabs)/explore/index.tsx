@@ -1,11 +1,13 @@
 import CategoryButton from "@/components/CategoryButton";
 import ExploreCard from "@/components/ExploreCard";
 import { colors } from "@/constants/theme";
+import { supabase } from "@/lib/supabase";
 import { useRouter } from "expo-router";
 import { ListFilter, Search } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
+  FlatList,
   ScrollView,
   StyleSheet,
   Text,
@@ -21,34 +23,64 @@ import {
 export default function ExplorePage() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [professionals, setProfessionals] = useState<{ id: string }[]>([]);
   const [headerHeight, setHeaderHeight] = useState(0);
   const location = "Saint Paul, MN";
   const inset = useSafeAreaInsets();
   console.log(selectedCategory);
+
+  useEffect(() => {
+    getProfessionals();
+  }, []);
+
+  async function getProfessionals() {
+    const { data, error } = await supabase.from("profiles").select("id");
+    if (error) {
+      throw new Error(error.message);
+    }
+    if (data) setProfessionals(data);
+  }
+
+  console.log(professionals);
+
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
-      <ScrollView
-        style={[styles.scrollView, { paddingTop: headerHeight }]}
-        showsVerticalScrollIndicator={false}
+      <View
+        style={[styles.scrollView, { }]}
+        // showsVerticalScrollIndicator={false}
       >
-        <View style={styles.sectionHeaderContainer}>
-          <Text style={styles.sectionHeader}>Professionals Near You</Text>
-          <TouchableOpacity>
-            <Text style={styles.viewAllText}>View all</Text>
-          </TouchableOpacity>
-        </View>
+        <FlatList
+          style={[styles.scrollView, { paddingTop: headerHeight }]}
+          data={professionals}
+          keyExtractor={(pro) => pro.id}
+          renderItem={({ item }) => <ExploreCard proId={item.id} />}
+          ListHeaderComponent={() => (
+            <View style={styles.sectionHeaderContainer}>
+              <Text style={styles.sectionHeader}>Professionals Near You</Text>
+              <TouchableOpacity>
+                <Text style={styles.viewAllText}>View all</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          ListFooterComponent={() => (
+            <Button
+              title="user page"
+              onPress={() => router.push("/explore/1")}
+            />
+          )}
+        />
 
+        {/* <ExploreCard />
         <ExploreCard />
         <ExploreCard />
         <ExploreCard />
         <ExploreCard />
         <ExploreCard />
         <ExploreCard />
-        <ExploreCard />
-        <ExploreCard />
+        <ExploreCard /> */}
 
-        <Button title="user page" onPress={() => router.push("/explore/1")} />
-      </ScrollView>
+        {/* <Button title="user page" onPress={() => router.push("/explore/1")} /> */}
+      </View>
       <View
         style={[styles.pageHeader, { top: inset.top }]}
         onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}

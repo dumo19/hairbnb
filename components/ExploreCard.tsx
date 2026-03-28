@@ -1,13 +1,37 @@
 import { colors } from "@/constants/theme";
+import { supabase } from "@/lib/supabase";
 import { useRouter } from "expo-router";
 import { BadgeCheck, Star } from "lucide-react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import SpecializationTag from "./SpecializationTag";
 
-const ExploreCard = () => {
+const ExploreCard = ({ proId }: { proId: string }) => {
   const [picWidth, setPicWidth] = useState(0);
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+
   const router = useRouter();
+
+  useEffect(() => {
+    fetchProfessionalData()
+  }, []);
+
+  async function fetchProfessionalData() {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("first_name, last_name")
+      .eq("id", proId)
+      .single();
+    
+    if (error) {
+      throw new Error(error.message);
+    }
+    if (data) {
+      setFirstName(data.first_name);
+      setLastName(data.last_name);
+    }
+  }
 
   return (
     <TouchableOpacity
@@ -34,7 +58,7 @@ const ExploreCard = () => {
           </View>
         </View>
         <View style={{ gap: 3 }}>
-          <Text style={styles.profileName}>Charles Carmichael</Text>
+          <Text style={styles.profileName}>{`${firstName} ${lastName}`}</Text>
           <Text>Barber • Stylist</Text>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 3 }}>
             {/* <MapPin size={14} color={colors.bodyText} /> */}

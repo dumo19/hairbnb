@@ -35,13 +35,17 @@ export default function ServiceCard({
 
 const styles = StyleSheet.create({
   container: {
-    borderWidth: 1.5,
+    // borderWidth: 1.5,
     borderColor: colors.cardBorder,
     padding: 15,
     marginBottom: 10,
     marginHorizontal: 20,
     borderRadius: 15,
-    backgroundColor: colors.background,
+    backgroundColor: "white",
+    shadowColor: "#1A1A1A",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
   },
   iconContainer: {
     backgroundColor: "#FFE0DB",

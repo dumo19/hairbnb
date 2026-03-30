@@ -39,13 +39,17 @@ export default function ReviewCard({
 
 const styles = StyleSheet.create({
   card: {
-    borderWidth: 2,
+    // borderWidth: 2,
     borderColor: colors.cardBorder,
     padding: 15,
     marginHorizontal: 20,
     borderRadius: 15,
     marginBottom: 10,
-    backgroundColor: colors.background
+    backgroundColor: "white",
+    shadowColor: "#1A1A1A",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
   },
   header: {
     flexDirection: "row",

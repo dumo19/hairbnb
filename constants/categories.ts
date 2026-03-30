@@ -631,6 +631,71 @@ export const ServiceCategories: Record<CategoryName, Category> = {
   },
 };
 
+export const SpecializationLabels: Record<string, string> = {
+  // Shared
+  genderIdentity: "Gender & Identity",
+  occasion: "Occasion",
+  skin: "Skin Tone & Type",
+  browTechnique: "Brow Technique",
+
+  
+  // Hair
+  textureType: "Texture & Hair Type",
+  color: "Color",
+  cuttingStyling: "Cutting & Styling",
+  extensionsProtective: "Extensions & Protective Styles",
+  treatment: "Treatments",
+
+  // Makeup
+  style: "Style",
+  technique: "Technique",
+  productFocus: "Product Focus",
+
+  // Skincare
+  skinType: "Skin Type",
+  concern: "Skin Concerns",
+  treatmentType: "Treatment Type",
+  skinTone: "Skin Tone",
+  age: "Age & Life Stage",
+
+  // Lashes & Brows
+  lashStyle: "Lash Style",
+  lashTechnique: "Lash Technique",
+  browStyle: "Brow Style",
+  eyeShape: "Eye Shape",
+  skinSensitivity: "Skin Sensitivity",
+
+  // Nails
+  serviceType: "Service Type",
+  nailArtStyle: "Nail Art Style",
+  finishTechnique: "Finish & Technique",
+  nailShape: "Nail Shape",
+  skinHealth: "Skin & Nail Health",
+
+  // Hair Removal
+  method: "Method",
+  bodyArea: "Body Area",
+  laserSpecialty: "Laser Specialty",
+
+  // PMU
+  lipEye: "Lip & Eye",
+  specialtyService: "Specialty Services",
+  correction: "Correction & Cover-up",
+
+  // Tattoo & Piercing
+  tattooStyle: "Tattoo Style",
+  tattooSpecialty: "Tattoo Specialty",
+  placement: "Placement",
+  piercingType: "Piercing Type",
+  piercingSpecialty: "Piercing Specialty",
+
+  // Wellness
+  massageType: "Massage Type",
+  bodyTreatment: "Body Treatments",
+  healthFocus: "Health Focus",
+  sprayTanSpecialty: "Spray Tan",
+};
+
 // ─────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────
@@ -655,6 +720,9 @@ export const getSpecializations = (
   category: CategoryName,
   key: string
 ): string[] => ServiceCategories[category].specializations[key] ?? [];
+
+export const getSpecializationLabel = (key: string): string =>
+  SpecializationLabels[key] ?? key;
 
 /** All specializations as an array of { key, options } — useful for rendering a full picker */
 export const getSpecializationGroups = (

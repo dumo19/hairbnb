@@ -2,19 +2,21 @@ import { colors } from "@/constants/theme";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-const SpecializationTag = ({ title }: { title: string }) => {
+const SpecializationTag = ({ title, border }: { title: string, border: boolean }) => {
   return (
     <View
       style={{
-        backgroundColor: "#FFE0DB",
+        backgroundColor: "white",
+        paddingVertical: 4,
+        paddingHorizontal: 8,
         borderRadius: 5,
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        borderWidth: 1.25,
-        borderColor: colors.primary
+        borderWidth: border ? 1 : 0,
+        borderColor: colors.cardBorder,
       }}
     >
-      <Text style={{fontSize: 12, color: colors.primary, fontWeight: "700"}}>{title}</Text>
+      <Text style={{ fontSize: 12, fontWeight: "500" , color: colors.bodyText }}>
+        {title}
+      </Text>
     </View>
   );
 };

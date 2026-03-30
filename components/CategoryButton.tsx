@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: 40,
+    borderRadius: 10,
     gap: 5,
   },
   defaultContainer: {
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     borderColor: colors.cardBorder,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: 40,
+    borderRadius: 10,
     gap: 5,
   },
   selectedText: { fontSize: 16, fontWeight: "700", color: colors.background },

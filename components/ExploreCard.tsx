@@ -12,6 +12,7 @@ const ExploreCard = ({ proId }: { proId: string }) => {
   const [username, setUsername] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
+  const [specializations, setSpecializations] = useState<string[]>([]);
 
   const router = useRouter();
 
@@ -22,7 +23,7 @@ const ExploreCard = ({ proId }: { proId: string }) => {
   async function fetchProfessionalData() {
     const { data, error } = await supabase
       .from("profiles")
-      .select("username, first_name, last_name")
+      .select("username, first_name, last_name, specializations")
       .eq("id", proId)
       .single();
 
@@ -33,80 +34,62 @@ const ExploreCard = ({ proId }: { proId: string }) => {
       setUsername(data.username);
       setFirstName(data.first_name);
       setLastName(data.last_name);
+      setSpecializations(data.specializations);
     }
   }
 
   return (
-    <TouchableOpacity
-      style={styles.cardContainer}
-      onPress={() => router.push(`/explore/${proId}`)}
-    >
-      <View style={styles.profileRow}>
-        <View
-          style={styles.wrapper}
-          onLayout={(e) => setPicWidth(e.nativeEvent.layout.width)}
-        >
-          {/* Image container (clipped) */}
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("@/assets/images/profile-pic.webp")}
-              style={styles.image}
-            />
-          </View>
-
-          {/* Badge (NOT clipped) */}
-          <View style={styles.badge}>
-            <BadgeCheck size={12} color={colors.background} />
+    <TouchableOpacity onPress={() => router.push(`/(client)/(tabs)/explore/${proId}`)} style={styles.cardTouchable}>
+      <View style={styles.cardInner}>
+        <View style={styles.imageWrapper}>
+          <Image
+            source={require("@/assets/images/haircut1.jpg")}
+            style={styles.coverImage}
+          />
+          <View style={styles.clientWorkBadge}>
+            <Text style={styles.clientWorkText}>Client Work</Text>
           </View>
         </View>
-        <View style={{ gap: 3 }}>
-          <Text style={styles.profileName}>{`${firstName} ${lastName}`}</Text>
-          <Text>Barber • Stylist</Text>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 3 }}>
-            {/* <MapPin size={14} color={colors.bodyText} /> */}
-            <Text style={styles.profileLocation}>Saint Paul, MN • 0.8 mi</Text>
+        <View style={styles.infoContainer}>
+          <View style={styles.profileRow}>
+            <View
+              style={styles.wrapper}
+              onLayout={(e) => setPicWidth(e.nativeEvent.layout.width)}
+            >
+              <View style={styles.imageContainer}>
+                <Image
+                  source={require("@/assets/images/profile-pic.webp")}
+                  style={styles.image}
+                />
+              </View>
+            </View>
+            <View style={styles.profileDetails}>
+              <View style={styles.nameRow}>
+                <Text style={styles.profileName}>{`${firstName} ${lastName}`}</Text>
+                <BadgeCheck size={18} color={colors.primaryDark} />
+              </View>
+              <View style={styles.locationRow}>
+                <Text style={styles.profileLocation}>Saint Paul, MN • 0.8 mi</Text>
+              </View>
+              <View style={styles.tagRow}>
+                <SpecializationTag title="Barber" border/>
+                <SpecializationTag title="Stylist" border/>
+              </View>
+            </View>
           </View>
-          {/* <View style={{ flexDirection: "row", alignItems: "center", gap: 3 }}>
-            <Star size={14} color={colors.bodyText} fill={colors.bodyText}/>
-            <Text style={styles.profileLocation}>4.7</Text>
-          </View> */}
-        </View>
-      </View>
-
-      <View
-        style={{ flexDirection: "row", marginTop: 8, alignItems: "center" }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 5,
-            // backgroundColor: "orange",
-            width: picWidth,
-            marginRight: 20,
-            justifyContent: "center",
-          }}
-        >
-          <Star size={16} color={colors.bodyText} fill={colors.bodyText} />
-          <Text
-            style={{ fontSize: 16, fontWeight: "600", color: colors.bodyText }}
-          >
-            4.7
-          </Text>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 5,
-            marginTop: 5,
-            flexWrap: "wrap",
-            flex: 1,
-          }}
-        >
-          <SpecializationTag title={"Curly Hair"} />
-          <SpecializationTag title={"Haircut"} />
-          <SpecializationTag title={"Haircut"} />
-          <SpecializationTag title={"Haircut"} />
+          <View style={styles.footer}>
+            <View>
+              <Text style={styles.startingAtLabel}>STARTING AT</Text>
+              <Text style={styles.price}>
+                $50
+                <Text style={styles.perSession}> / session</Text>
+              </Text>
+            </View>
+            <View style={styles.ratingRow}>
+              <Star size={12} color={colors.primary} fill={colors.primary} />
+              <Text style={styles.ratingText}>4.7</Text>
+            </View>
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -116,27 +99,112 @@ const ExploreCard = ({ proId }: { proId: string }) => {
 export default ExploreCard;
 
 const styles = StyleSheet.create({
+  cardTouchable: {
+    paddingHorizontal: 20,
+    shadowColor: "#1A1A1A",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
+    marginBottom: 20,
+  },
+  cardInner: {
+    borderRadius: 15,
+    overflow: "hidden",
+  },
+  imageWrapper: {
+    backgroundColor: "grey",
+    width: "100%",
+    aspectRatio: 3 / 2,
+  },
+  coverImage: {
+    width: "100%",
+    height: "100%",
+  },
+  clientWorkBadge: {
+    position: "absolute",
+    left: 15,
+    bottom: 15,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 5,
+    backgroundColor: "rgba(0, 0, 0, 0.25)",
+  },
+  clientWorkText: {
+    fontSize: 12,
+    color: colors.background,
+    fontWeight: "600",
+  },
+  infoContainer: {
+    backgroundColor: "white",
+    padding: 15,
+  },
+  profileRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  profileDetails: {
+    gap: 0,
+  },
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+  },
+  locationRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+  },
+  tagRow: {
+    flexDirection: "row",
+    gap: 5,
+    marginTop: 3,
+  },
+  footer: {
+    borderTopWidth: 1,
+    marginTop: 10,
+    paddingTop: 10,
+    borderColor: colors.cardBorder,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  startingAtLabel: {
+    fontSize: 12,
+    color: colors.mutedText,
+  },
+  price: {
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  perSession: {
+    fontWeight: "400",
+    fontSize: 14,
+    color: colors.mutedText,
+  },
+  ratingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+  },
+  ratingText: {
+    fontSize: 18,
+    fontWeight: "600",
+  },
   wrapper: {
-    // width: 80,
     aspectRatio: 1,
     position: "relative",
   },
-
   imageContainer: {
     flex: 1,
     borderRadius: 10,
     overflow: "hidden",
-    borderWidth: 3,
     borderColor: colors.primary,
-    padding: 2,
   },
-
   image: {
     width: "100%",
     height: "100%",
-    borderRadius: 7,
   },
-
   badge: {
     position: "absolute",
     bottom: -5,
@@ -153,7 +221,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginBottom: 10,
   },
-  profileRow: { flexDirection: "row", gap: 20 },
   profilePicWrapper: {
     aspectRatio: 1,
     borderWidth: 3,
@@ -170,7 +237,18 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     overflow: "hidden",
   },
-  profileName: { fontWeight: "600", fontSize: 18, color: colors.headingText },
-  profileSalon: { color: colors.bodyText, fontSize: 14, fontWeight: "500" },
-  profileLocation: { color: colors.bodyText, fontSize: 12 },
+  profileName: {
+    fontWeight: "600",
+    fontSize: 18,
+    color: colors.headingText,
+  },
+  profileSalon: {
+    color: colors.bodyText,
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  profileLocation: {
+    color: colors.bodyText,
+    fontSize: 12,
+  },
 });

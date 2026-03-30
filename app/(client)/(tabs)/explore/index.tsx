@@ -1,6 +1,7 @@
 import CategoryButton from "@/components/CategoryButton";
 import ExploreCard from "@/components/ExploreCard";
 import { colors } from "@/constants/theme";
+import { useFilterStore } from "@/lib/filter-store";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "expo-router";
 import { ListFilter, Search } from "lucide-react-native";
@@ -19,7 +20,15 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
+export type FilterProps = {
+  category: string;
+  services: string[];
+  specializations: string[];
+};
+
 export default function ExplorePage() {
+  const { filters } = useFilterStore();
+
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [professionals, setProfessionals] = useState<{ id: string }[]>([]);
@@ -27,41 +36,42 @@ export default function ExplorePage() {
   const inset = useSafeAreaInsets();
   // console.log(selectedCategory);
 
+  // const [filterProps, setFilterProps] = useState<FilterProps>({
+  //   category: "All",
+  //   services: [],
+  //   specializations: [],
+  // });
+
   useEffect(() => {
     getProfessionals();
   }, []);
 
+  useEffect(() => {
+    console.log("active filters:", filters);
+    getProfessionals();
+  }, [filters]);
+
   async function getProfessionals() {
-    const { data, error } = await supabase.from("profiles").select("id");
+    let query = supabase.from("profiles").select("id");
+
+    if (filters.category !== "All") {
+      query = query
+        .contains("categories", [filters.category])
+        .contains("services", filters.services)
+        .contains("specializations", filters.specializations);
+    }
+
+    const { data, error } = await query;
     if (error) {
       throw new Error(error.message);
     }
     if (data) setProfessionals(data);
   }
 
-  // console.log(professionals);
-
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
-      <View style={styles.scrollView}>
-        <FlatList
-          style={[styles.scrollView, { paddingTop: headerHeight }]}
-          data={professionals}
-          keyExtractor={(pro) => pro.id}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => <ExploreCard proId={item.id} />}
-          ListHeaderComponent={() => (
-            <View style={styles.sectionHeaderContainer}>
-              <Text style={styles.sectionHeader}>Professionals Near You</Text>
-              <TouchableOpacity>
-                <Text style={styles.viewAllText}>View all</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        />
-      </View>
       <View
-        style={[styles.pageHeader, { top: inset.top }]}
+        style={[styles.pageHeader]}
         onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}
       >
         <View style={{ flexDirection: "row", marginHorizontal: 20, gap: 10 }}>
@@ -78,7 +88,7 @@ export default function ExplorePage() {
             <Search color={colors.primary} style={{ marginRight: 10 }} />
             <TextInput
               style={{ flex: 1, fontSize: 16, color: colors.bodyText }}
-              placeholder="Search professionals, services..."
+              placeholder="Search professionals..."
               placeholderTextColor={"#888"}
             />
           </View>
@@ -90,72 +100,27 @@ export default function ExplorePage() {
               justifyContent: "center",
               alignItems: "center",
             }}
-            onPress={() => router.push('/explore/explore-filter')}
+            onPress={() => router.push("/explore/explore-filter")}
           >
             <ListFilter size={21} color={colors.background} />
           </TouchableOpacity>
         </View>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingHorizontal: 20,
-            gap: 10,
-            marginTop: 15,
-          }}
-        >
-          <CategoryButton
-            category={"All"}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-          />
-          <CategoryButton
-            category={"Hair"}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-          />
-          <CategoryButton
-            category={"Makeup"}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-          />
-          <CategoryButton
-            category={"Skincare"}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-          />
-          <CategoryButton
-            category={"Lashes & Brows"}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-          />
-          <CategoryButton
-            category={"Nails"}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-          />
-          <CategoryButton
-            category={"Hair Removal"}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-          />
-          <CategoryButton
-            category={"PMU"}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-          />
-          <CategoryButton
-            category={"Tattoo & Piercing"}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-          />
-          <CategoryButton
-            category={"Wellness"}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-          />
-        </ScrollView>
+      </View>
+      <View style={styles.scrollView}>
+        <FlatList
+          data={professionals}
+          keyExtractor={(pro) => pro.id}
+          // showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => <ExploreCard proId={item.id} />}
+          ListHeaderComponent={() => (
+            <View style={styles.sectionHeaderContainer}>
+              <Text style={styles.sectionHeader}>Professionals Near You</Text>
+              <TouchableOpacity>
+                <Text style={styles.viewAllText}>View all</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        />
       </View>
     </SafeAreaView>
   );
@@ -163,11 +128,11 @@ export default function ExplorePage() {
 
 const styles = StyleSheet.create({
   pageHeader: {
-    position: "absolute",
-    left: 0,
-    right: 0,
+    // position: "absolute",
+    // left: 0,
+    // right: 0,
     backgroundColor: colors.background,
-    zIndex: 100,
+    // zIndex: 100,
     paddingBottom: 15,
     borderBottomWidth: 2,
     borderBottomColor: colors.cardBorder,

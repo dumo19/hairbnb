@@ -13,6 +13,7 @@ const ExploreCard = ({ proId }: { proId: string }) => {
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [specializations, setSpecializations] = useState<string[]>([]);
+  const [occupations, setOccupations] = useState<string[]>([]);
 
   const router = useRouter();
 
@@ -23,7 +24,7 @@ const ExploreCard = ({ proId }: { proId: string }) => {
   async function fetchProfessionalData() {
     const { data, error } = await supabase
       .from("profiles")
-      .select("username, first_name, last_name, specializations")
+      .select("username, first_name, last_name, specializations, occupations")
       .eq("id", proId)
       .single();
 
@@ -35,11 +36,15 @@ const ExploreCard = ({ proId }: { proId: string }) => {
       setFirstName(data.first_name);
       setLastName(data.last_name);
       setSpecializations(data.specializations);
+      setOccupations(data.occupations);
     }
   }
 
   return (
-    <TouchableOpacity onPress={() => router.push(`/(client)/(tabs)/explore/${proId}`)} style={styles.cardTouchable}>
+    <TouchableOpacity
+      onPress={() => router.push(`/(client)/(tabs)/explore/${proId}`)}
+      style={styles.cardTouchable}
+    >
       <View style={styles.cardInner}>
         <View style={styles.imageWrapper}>
           <Image
@@ -54,7 +59,7 @@ const ExploreCard = ({ proId }: { proId: string }) => {
           <View style={styles.profileRow}>
             <View
               style={styles.wrapper}
-              onLayout={(e) => setPicWidth(e.nativeEvent.layout.width)}
+              // onLayout={(e) => setPicWidth(e.nativeEvent.layout.width)}
             >
               <View style={styles.imageContainer}>
                 <Image
@@ -65,15 +70,20 @@ const ExploreCard = ({ proId }: { proId: string }) => {
             </View>
             <View style={styles.profileDetails}>
               <View style={styles.nameRow}>
-                <Text style={styles.profileName}>{`${firstName} ${lastName}`}</Text>
+                <Text
+                  style={styles.profileName}
+                >{`${firstName} ${lastName}`}</Text>
                 <BadgeCheck size={18} color={colors.primaryDark} />
               </View>
               <View style={styles.locationRow}>
-                <Text style={styles.profileLocation}>Saint Paul, MN • 0.8 mi</Text>
+                <Text style={styles.profileLocation}>
+                  Saint Paul, MN • 0.8 mi
+                </Text>
               </View>
               <View style={styles.tagRow}>
-                <SpecializationTag title="Barber" border/>
-                <SpecializationTag title="Stylist" border/>
+                {occupations.map((occ) => (
+                  <SpecializationTag title={occ} border key={occ} />
+                ))}
               </View>
             </View>
           </View>
@@ -137,13 +147,15 @@ const styles = StyleSheet.create({
   infoContainer: {
     backgroundColor: "white",
     padding: 15,
+    flexDirection: "column",
   },
   profileRow: {
     flexDirection: "row",
     gap: 10,
   },
   profileDetails: {
-    gap: 0,
+    gap: 1,
+    flex: 1,
   },
   nameRow: {
     flexDirection: "row",
@@ -159,10 +171,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 5,
     marginTop: 3,
+    flexWrap: "wrap",
   },
   footer: {
     borderTopWidth: 1,
-    marginTop: 10,
+    marginTop: 15,
     paddingTop: 10,
     borderColor: colors.cardBorder,
     flexDirection: "row",
@@ -196,7 +209,8 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   imageContainer: {
-    flex: 1,
+    // flex: 1,
+
     borderRadius: 10,
     overflow: "hidden",
     borderColor: colors.primary,

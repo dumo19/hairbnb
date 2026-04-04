@@ -10,8 +10,10 @@ import {
   BadgeCheck,
   Bookmark,
   ChevronLeft,
+  MapPin,
   MessageCircle,
   Star,
+  Store,
 } from "lucide-react-native";
 
 import { supabase } from "@/lib/supabase";
@@ -34,6 +36,7 @@ export default function UserPage() {
   const [lastName, setLastName] = useState<string>("");
   const [categories, setCategories] = useState<string[]>([]);
   const [specializations, setSpecializations] = useState<string[]>([]);
+  const [occupations, setOccupations] = useState<string[]>([]);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
@@ -43,7 +46,9 @@ export default function UserPage() {
   async function fetchProfessionalData() {
     const { data, error } = await supabase
       .from("profiles")
-      .select("first_name, last_name, categories, services, specializations")
+      .select(
+        "first_name, last_name, categories, services, specializations, occupations",
+      )
       .eq("id", proId)
       .single();
 
@@ -55,6 +60,7 @@ export default function UserPage() {
       setLastName(data.last_name);
       setCategories(data.categories);
       setSpecializations(data.specializations);
+      setOccupations(data.occupations);
     }
   }
 
@@ -88,13 +94,28 @@ export default function UserPage() {
                 <BadgeCheck size={18} color={colors.primaryDark} />
               </View>
               <View style={styles.locationRow}>
+                <Store size={12} color={colors.bodyText} />
+                <Text
+                  style={[
+                    styles.profileLocation,
+                    { fontWeight: "400", fontSize: 12 },
+                  ]}
+                >
+                  Harry's Salon
+                </Text>
+              </View>
+              <View style={styles.locationRow}>
+                <MapPin size={12} color={colors.bodyText} />
                 <Text style={styles.profileLocation}>
                   Saint Paul, MN • 0.8 mi
                 </Text>
               </View>
               <View style={styles.tagRow}>
-                <SpecializationTag title="Barber" border />
-                <SpecializationTag title="Stylist" border />
+                {occupations.map((occ) => (
+                  <SpecializationTag title={occ} border key={occ}/>
+                ))}
+                {/* <SpecializationTag title="Barber" border />
+                <SpecializationTag title="Stylist" border /> */}
               </View>
             </View>
           </View>
@@ -350,7 +371,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   profileDetails: {
-    gap: 0,
+    gap: 1,
   },
   nameRow: {
     flexDirection: "row",
@@ -363,9 +384,11 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   tagRow: {
+    flex: 1,
     flexDirection: "row",
     gap: 5,
     marginTop: 3,
+    flexWrap: "wrap"
   },
   profileName: {
     fontWeight: "600",
@@ -396,7 +419,7 @@ const styles = StyleSheet.create({
   footer: {
     borderTopWidth: 1,
     borderColor: colors.cardBorder,
-    marginTop: 20,
+    marginTop: 15,
     paddingTop: 10,
     flexDirection: "row",
     justifyContent: "space-between",

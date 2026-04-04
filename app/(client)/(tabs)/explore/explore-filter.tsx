@@ -9,7 +9,7 @@ import { colors } from "@/constants/theme";
 import { useFilterStore } from "@/lib/filter-store";
 import CategoryIcon from "@/utils/CategoryIcon";
 import { useRouter } from "expo-router";
-import { Check, X } from "lucide-react-native";
+import { ChevronLeft } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   Pressable,
@@ -24,234 +24,292 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-type RadioItemProp = {
+type CategoryItemProp = {
   label: string;
   selected: boolean;
   onPress: () => void;
 };
 
-type SpecializationTagProp = {
+type SpecServiceTagProp = {
   label: string;
   selected: boolean;
   onPress: () => void;
 };
 
-const RadioItem = ({ label, selected, onPress }: RadioItemProp) => {
+const CategoryItem = ({ label, selected, onPress }: CategoryItemProp) => {
+  const isSelected = {
+    container: styles.selectedTagContainer,
+    label: styles.selectedTagLabel,
+  };
   return (
     <Pressable
       onPress={onPress}
       style={[
-        selected
-          ? styles.selectedSpecializationTagContainer
-          : styles.specializationTagContainer,
+        selected ? styles.selectedTagContainer : styles.TagContainer,
         { flexDirection: "row", gap: 10, alignItems: "center" },
       ]}
     >
       <CategoryIcon
         category={label}
-        size={14}
+        size={16}
         color={selected ? colors.background : colors.mutedText}
       />
-      <Text
-        style={
-          selected
-            ? styles.selectedSpecializationTagLabel
-            : styles.specializationTagLabel
-        }
-      >
+      <Text style={selected ? styles.selectedTagLabel : styles.TagLabel}>
         {label}
       </Text>
     </Pressable>
   );
 };
 
-const SpecializationTag = ({
-  label,
-  selected,
-  onPress,
-}: SpecializationTagProp) => {
+const SpecServiceTag = ({ label, selected, onPress }: SpecServiceTagProp) => {
   return (
     <Pressable
       onPress={onPress}
-      style={
-        selected
-          ? styles.selectedSpecializationTagContainer
-          : styles.specializationTagContainer
-      }
+      style={selected ? styles.selectedTagContainer : styles.TagContainer}
     >
-      <Text
-        style={
-          selected
-            ? styles.selectedSpecializationTagLabel
-            : styles.specializationTagLabel
-        }
-      >
+      <Text style={selected ? styles.selectedTagLabel : styles.TagLabel}>
         {label}
       </Text>
     </Pressable>
   );
 };
 
+/**
+ * search filter page for the explore page
+ * @returns search filter page
+ */
 const ExploreFilterPage = () => {
   const { filters, setFilters } = useFilterStore();
 
-  const [selectedCategory, setSelectedCategory] = useState<
-    CategoryName | "All"
-  >(filters.category);
+  // state for the selected category
+  const [selectedCat, setSelectedCat] = useState<CategoryName | "All">(
+    filters.category,
+  );
+
+  // state for the selected services
   const [services, setServices] = useState<string[]>(
-    selectedCategory != "All" ? getServices(selectedCategory) : [],
+    selectedCat != "All" ? getServices(selectedCat) : [],
   );
-  const [selectedServices, setSelectedServices] = useState<string[]>(
-    filters.services,
+
+  // state for the selected services
+  const [selectedServ, setSelectedServ] = useState<string[]>(filters.services);
+
+  // state for the selected specializations
+  const [selectedSpecs, setSelectedSpecs] = useState<string[]>(
+    filters.specializations,
   );
-  // const [specializationKeys, setSpecializationKeys] = useState<string[]>([]);
-  const [selectedSpecializations, setSelectedSpecializations] = useState<
-    string[]
-  >(filters.specializations);
 
   const inset = useSafeAreaInsets();
   const router = useRouter();
 
+  /**
+   * helper function that selecteds a category and updates it in the
+   * selected category state
+   * @param category category selected
+   * @returns
+   */
   const handleCategoryPress = (category: CategoryName | "All") => {
-    setSelectedCategory(category);
+    setSelectedCat(category);
+    setSelectedServ([])
+    setSelectedSpecs([]);
+    
     if (category === "All") return;
-    setSelectedSpecializations([]);
     setServices(getServices(category));
   };
 
-  const handleServiceTagPress = (service: string) => {
-    setSelectedServices((prev) =>
+  /**
+   * helper function to toggle a service when it is pressed.
+   * Either adds the service to the service state array
+   * or remove it.
+   * @param service The service selected
+   */
+  const handleServiceTagPress = (service: string): void => {
+    setSelectedServ((prev) =>
       prev.includes(service)
         ? prev.filter((s) => s !== service)
         : [...prev, service],
     );
   };
 
-  const handleSpecializationTagPress = (spec: string) => {
-    setSelectedSpecializations((prev) =>
+  /**
+   * helper function to toggle a specialization when it is pressed.
+   * Either adds the specialization to the specialization state array
+   * or remove it.
+   * @param spec The specialization selected
+   */
+  const handleSpecServiceTagPress = (spec: string): void => {
+    setSelectedSpecs((prev) =>
       prev.includes(spec) ? prev.filter((s) => s !== spec) : [...prev, spec],
     );
   };
 
-  const handleApplyFilter = () => {
-    // if (!selectedCategory) return;
+  /**
+   * helper function that sets the filters using the selected items using the function
+   * provided by the useFilterStore hook
+   */
+  const handleApplyFilter = (): void => {
     setFilters({
-      category: selectedCategory ? selectedCategory : "All",
-      services: selectedServices,
-      specializations: selectedSpecializations,
+      category: selectedCat ? selectedCat : "All",
+      services: selectedServ,
+      specializations: selectedSpecs,
     });
 
     router.back();
   };
 
-  return (
-    <SafeAreaView
-      edges={["top"]}
-      style={{
-        // paddingHorizontal: 20,
-        backgroundColor: colors.background,
-        flex: 1,
-      }}
-    >
+  /**
+   * Helper function to reset the filters by clearing the sevice and
+   * specialization states and setting the category to "All"
+   */
+  const handleClearFilter = (): void => {
+    setSelectedCat("All")
+    setSelectedServ([]),
+    setSelectedSpecs([])
+  }
+
+  /**
+   * JSX element for the page header of the search filter page
+   * @returns JSX element
+   */
+  const FilterPageHeader = (): React.JSX.Element => {
+    return (
       <View style={styles.headerContainer}>
-        <Text style={styles.filterTitle}>Filter Search</Text>
-        <View style={{ flexDirection: "row", gap: 10 }}>
-          <TouchableOpacity
-            onPress={handleApplyFilter}
-            style={styles.headerButton}
-          >
-            {/* <Text style={styles.headerButtonText}>Apply</Text> */}
-            <Check size={24} color={colors.background} />
-          </TouchableOpacity>
+        <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
           <TouchableOpacity
             onPress={() => router.back()}
             style={styles.headerButton}
           >
-            <X size={24} color={colors.background} />
-            {/* <Text style={styles.headerButtonText}>Cancel</Text> */}
+            <ChevronLeft size={24} color={colors.headingText} />
           </TouchableOpacity>
+          <Text style={styles.filterTitle}>Filters</Text>
         </View>
+        <TouchableOpacity onPress={handleClearFilter} style={styles.clearAll}>
+          <Text style={styles.clearAllText}>Clear All</Text>
+        </TouchableOpacity>
       </View>
-      <ScrollView
-        style={{ backgroundColor: colors.background, paddingHorizontal: 20 }}
-      >
+    );
+  };
+
+  /**
+   * JSX element where a use can select a category for a service or provider
+   * that they are looking for. Only one category can be selected at a time
+   * @returns JSX element to select a category
+   */
+  const CategorySection = (): React.JSX.Element => {
+    return (
+      <>
         <View style={styles.sectionHeaderContainer}>
           <Text style={styles.sectionHeader}>Category</Text>
         </View>
-        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 5 }}>
-          <RadioItem
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
+          <CategoryItem
             key={"All"}
             label={"All"}
-            selected={selectedCategory === "All"}
+            selected={selectedCat === "All"}
             onPress={() => handleCategoryPress("All")}
           />
           {CategoryNames.map((category) => (
-            <RadioItem
+            <CategoryItem
               key={category}
               label={category}
-              selected={selectedCategory === category}
+              selected={selectedCat === category}
               onPress={() => handleCategoryPress(category)}
             />
           ))}
         </View>
+      </>
+    );
+  };
 
-        {selectedCategory != "All" && (
-          <>
-            <View style={styles.sectionHeaderContainer}>
-              <Text style={styles.sectionHeader}>
-                {selectedCategory} Services
-              </Text>
-            </View>
-            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 5 }}>
-              {services.map((service) => (
-                <SpecializationTag
-                  key={service}
-                  label={service}
-                  selected={selectedServices.includes(service)}
-                  onPress={() => handleServiceTagPress(service)}
-                />
-              ))}
-            </View>
-          </>
-        )}
+  /**
+   * JSX element for the search filter to show a list of services of
+   * a given category only when clicked. The user can select as many
+   * services as desired.
+   * @returns a JSX element to select services options when the
+   * selected category is not "All", else returns null
+   */
+  const ServicesSection = (): React.JSX.Element | null => {
+    return selectedCat != "All" ? (
+      <>
+        <View style={styles.sectionHeaderContainer}>
+          <Text style={styles.sectionHeader}>{selectedCat} Services</Text>
+        </View>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
+          {services.map((service) => (
+            <SpecServiceTag
+              key={service}
+              label={service}
+              selected={selectedServ.includes(service)}
+              onPress={() => handleServiceTagPress(service)}
+            />
+          ))}
+        </View>
+      </>
+    ) : null;
+  };
 
-        {selectedCategory != "All" && (
-          <View style={[styles.sectionHeaderContainer]}>
-            <Text style={styles.sectionHeader}>Specializations</Text>
-          </View>
-        )}
+  /**
+   * JSX element for the search filter to show a list of specializations of
+   * a given category only when clicked. The user can select as many
+   * specializations as desired.
+   * @returns a JSX element to select specialization options when the
+   * selected category is not "All", else returns null
+   */
+  const SpecializationsSection = (): React.JSX.Element | null => {
+    return selectedCat != "All" ? (
+      <>
+        <View style={[styles.sectionHeaderContainer]}>
+          <Text style={styles.sectionHeader}>Specializations</Text>
+        </View>
 
-        {selectedCategory != "All" ? (
-          <View style={{ paddingBottom: inset.bottom }}>
-            {getSpecializationGroups(selectedCategory).map(
-              ({ key, options }, index) => (
-                <View key={key}>
-                  <Text
-                    style={[
-                      styles.specializationLabel,
-                      { marginTop: index === 0 ? 0 : 20 },
-                    ]}
-                  >
-                    {getSpecializationLabel(key)}
-                  </Text>
-                  <View
-                    style={{ flexDirection: "row", flexWrap: "wrap", gap: 5 }}
-                  >
-                    {options.map((spec) => (
-                      <SpecializationTag
-                        key={spec}
-                        label={spec}
-                        selected={selectedSpecializations.includes(spec)}
-                        onPress={() => handleSpecializationTagPress(spec)}
-                      />
-                    ))}
-                  </View>
+        <View style={{ paddingBottom: inset.bottom }}>
+          {getSpecializationGroups(selectedCat).map(
+            ({ key, options }, index) => (
+              <View key={key}>
+                <Text
+                  style={[
+                    styles.specializationLabel,
+                    { marginTop: index === 0 ? 0 : 20 },
+                  ]}
+                >
+                  {getSpecializationLabel(key)}
+                </Text>
+                <View
+                  style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}
+                >
+                  {options.map((spec) => (
+                    <SpecServiceTag
+                      key={spec}
+                      label={spec}
+                      selected={selectedSpecs.includes(spec)}
+                      onPress={() => handleSpecServiceTagPress(spec)}
+                    />
+                  ))}
                 </View>
-              ),
-            )}
-          </View>
-        ) : null}
+              </View>
+            ),
+          )}
+        </View>
+      </>
+    ) : null;
+  };
+
+  return (
+    <SafeAreaView edges={["top", "bottom"]} style={styles.pageContainer}>
+      <FilterPageHeader />
+      <ScrollView style={styles.scrollContainer}>
+        <CategorySection />
+        <ServicesSection />
+        <SpecializationsSection />
       </ScrollView>
+      <View style={styles.footerContainer}>
+        <TouchableOpacity
+          onPress={handleApplyFilter}
+          style={styles.footerButton}
+        >
+          <Text style={styles.footerButtonText}>Apply</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -259,8 +317,16 @@ const ExploreFilterPage = () => {
 export default ExploreFilterPage;
 
 const styles = StyleSheet.create({
+  pageContainer: {
+    backgroundColor: colors.background,
+    flex: 1,
+  },
+  scrollContainer: {
+    backgroundColor: colors.background,
+    paddingHorizontal: 20,
+  },
   headerContainer: {
-    backgroundColor: colors.primary,
+    // backgroundColor: colors.primary,
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 20,
@@ -269,14 +335,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   filterTitle: {
-    fontWeight: "700",
-    fontSize: 24,
-    color: colors.background,
+    fontWeight: "600",
+    fontSize: 21,
+    color: colors.headingText,
   },
   headerButton: {
-    borderWidth: 2,
+    // borderWidth: 2,
     borderColor: colors.background,
-    padding: 5,
+    // padding: 5,
     borderRadius: 10,
   },
   headerButtonText: {
@@ -310,7 +376,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   sectionHeader: { fontWeight: "600", fontSize: 18, color: colors.headingText },
   specializationLabel: {
@@ -321,27 +387,32 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
   },
-  specializationTagContainer: {
+  TagContainer: {
     backgroundColor: colors.background,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     borderRadius: 5,
     borderWidth: 1,
     borderColor: colors.cardBorder,
   },
-  specializationTagLabel: {
-    color: colors.mutedText,
-  },
-  selectedSpecializationTagContainer: {
+
+  selectedTagContainer: {
     backgroundColor: colors.primary,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     borderRadius: 5,
     borderWidth: 1,
     borderColor: colors.primary,
   },
-  selectedSpecializationTagLabel: {
+  TagLabel: {
+    color: colors.mutedText,
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  selectedTagLabel: {
     color: colors.background,
+    fontSize: 16,
+    fontWeight: "500",
   },
   applyButton: {
     backgroundColor: colors.primary,
@@ -357,5 +428,31 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 16,
     color: colors.background,
+  },
+  footerContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    borderTopWidth: 2,
+    borderColor: colors.cardBorder,
+    paddingTop: 15,
+    gap: 20,
+  },
+  footerButton: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.primary,
+    padding: 15,
+    borderRadius: 5,
+  },
+  footerButtonText: {
+    color: colors.background,
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  clearAll: {},
+  clearAllText: {
+    color: colors.primaryDark,
+    fontWeight: "500",
   },
 });

@@ -115,9 +115,9 @@ export default function ExplorePage() {
           ListHeaderComponent={() => (
             <View style={styles.sectionHeaderContainer}>
               <Text style={styles.sectionHeader}>Professionals Near You</Text>
-              <TouchableOpacity>
+              {/* <TouchableOpacity>
                 <Text style={styles.viewAllText}>View all</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           )}
         />

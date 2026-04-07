@@ -1,42 +1,51 @@
-import { colors } from "@/constants/theme";
-import { FileBadge } from "lucide-react-native";
+import { colors } from "@/constants/colors";
+import { fontSize, fontWeight } from "@/constants/fonts";
+import { Award } from "lucide-react-native";
 import { StyleSheet, Text, View } from "react-native";
 
+/**
+ * JSX element to display a professional's credentials or cetrifications
+ * @param param0
+ * @returns
+ */
 export default function CredentialCard({
   title,
   org,
   year,
+  top,
+  bottom,
 }: {
   title: string;
   org: string;
   year: string;
+  top: boolean;
+  bottom: boolean;
 }) {
+  const paddingVertical = 15;
+
   return (
-    <View style={styles.container}>
-      <View style={{ flexDirection: "row" }}>
-        <View style={styles.iconContainer}>
-          <FileBadge color={colors.primary} />
-        </View>
+    <View
+      style={[
+        styles.container,
+        {
+          borderTopWidth: top ? 0 : 1,
+          paddingTop: top ? 0 : paddingVertical,
+          paddingBottom: bottom ? 0 : paddingVertical,
+        },
+      ]}
+    >
+      <View style={styles.row}>
+        {/* <View style={styles.iconContainer}>
+          <Award color={colors.coral} size={20} />
+        </View> */}
         <View style={styles.textContainer}>
-          <View style={{ flexDirection: "column", flex: 1, marginRight: 10 }}>
-            <Text
-              style={{
-                fontWeight: "700",
-                fontSize: 16,
-                color: colors.headingText,
-              }}
-            >
-              {title}
-            </Text>
-            <Text
-              style={{ fontSize: 12, flexShrink: 1, color: colors.bodyText }}
-            >
-              {org}
-            </Text>
+          <View style={styles.textColumn}>
+            <View style={styles.titleRow}>
+              <Text style={styles.titleText}>{title}</Text>
+              <Text style={styles.yearBadge}>{year}</Text>
+            </View>
+            <Text style={styles.orgText}>{org}</Text>
           </View>
-          <Text style={{ fontWeight: "600", color: colors.bodyText }}>
-            {year}
-          </Text>
         </View>
       </View>
     </View>
@@ -45,34 +54,65 @@ export default function CredentialCard({
 
 const styles = StyleSheet.create({
   container: {
-    // borderWidth: 1.5,
     borderColor: colors.cardBorder,
-    padding: 15,
-    marginBottom: 10,
-    marginHorizontal: 20,
-    borderRadius: 15,
-    backgroundColor: "white",
-    shadowColor: "#1A1A1A",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 16,
-    // marginBottom: 20,
+    // marginBottom: 10,
+    // marginHorizontal: 20,
+    // borderTopWidth: 1,
+    // paddingVertical: 10,
+    // padding: 15,
+    borderRadius: 10,
+    // backgroundColor: colors.linen,
+  },
+  row: {
+    flexDirection: "row",
   },
   iconContainer: {
-    backgroundColor: "#FFE0DB",
-    // borderWidth: 1,
-    height: 48,
+    backgroundColor: "white",
+    borderWidth: 1,
+    height: 39,
     aspectRatio: 1,
-    borderRadius: 8,
+    borderRadius: 999,
     justifyContent: "center",
     alignItems: "center",
+    borderColor: colors.cardBorder,
   },
   textContainer: {
+    flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginLeft: 15,
+    // marginLeft: 10,
+  },
+  textColumn: {
     flex: 1,
-    // backgroundColor: "orange"
+    flexDirection: "column",
+  },
+  titleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  titleText: {
+    fontWeight: fontWeight.medium,
+    fontSize: fontSize.body,
+    color: colors.ink,
+  },
+  yearBadge: {
+    fontSize: fontSize.secondary,
+    fontWeight: fontWeight.medium,
+    color: colors.coralDark,
+    backgroundColor: "white",
+    paddingVertical: 3,
+    paddingHorizontal: 6,
+    borderWidth: 1,
+    borderRadius: 999,
+    borderColor: colors.cardBorder,
+    alignSelf: "flex-start",
+  },
+  orgText: {
+    fontSize: fontSize.secondary,
+    fontWeight: fontWeight.regular,
+    flexShrink: 1,
+    color: colors.ashMid,
   },
 });

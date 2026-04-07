@@ -1,5 +1,6 @@
 import CategoryButton from "@/components/CategoryButton";
 import ExploreCard from "@/components/ExploreCard";
+import { fontSize, fontWeight } from "@/constants/fonts";
 import { colors } from "@/constants/theme";
 import { useFilterStore } from "@/lib/filter-store";
 import { supabase } from "@/lib/supabase";
@@ -34,13 +35,6 @@ export default function ExplorePage() {
   const [professionals, setProfessionals] = useState<{ id: string }[]>([]);
   const [headerHeight, setHeaderHeight] = useState(0);
   const inset = useSafeAreaInsets();
-  // console.log(selectedCategory);
-
-  // const [filterProps, setFilterProps] = useState<FilterProps>({
-  //   category: "All",
-  //   services: [],
-  //   specializations: [],
-  // });
 
   useEffect(() => {
     getProfessionals();
@@ -80,7 +74,7 @@ export default function ExplorePage() {
               flexDirection: "row",
               borderWidth: 2,
               padding: 10,
-              borderRadius: 15,
+              borderRadius: 999,
               flex: 1,
               borderColor: colors.cardBorder,
             }}
@@ -96,7 +90,7 @@ export default function ExplorePage() {
             style={{
               backgroundColor: colors.primary,
               aspectRatio: 1,
-              borderRadius: 15,
+              borderRadius: 999,
               justifyContent: "center",
               alignItems: "center",
             }}
@@ -147,6 +141,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     marginBottom: 10,
   },
-  sectionHeader: { fontWeight: "600", fontSize: 18, color: colors.headingText },
+  sectionHeader: { fontWeight: fontWeight.semibold, fontSize: fontSize.title, color: colors.headingText },
   viewAllText: { color: colors.bodyText },
 });

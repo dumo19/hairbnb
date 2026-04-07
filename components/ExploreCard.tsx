@@ -1,20 +1,24 @@
-import { colors } from "@/constants/theme";
+import { colors } from "@/constants/colors";
 import { supabase } from "@/lib/supabase";
+import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { BadgeCheck, Star } from "lucide-react-native";
+import { Award, Bookmark, MapPin } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import SpecializationTag from "./SpecializationTag";
+import { OccupationTag } from "./OccupationTag";
+import { fontSize, fontWeight } from "@/constants/fonts";
+
+type ExploreProData = {
+  firstName: string;
+  lastName: string;
+  occupations: string[];
+  avatar: string;
+  featurePhoto: string;
+};
 
 const ExploreCard = ({ proId }: { proId: string }) => {
-  const [picWidth, setPicWidth] = useState(0);
-  const [username, setUsername] = useState<string>("");
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [specializations, setSpecializations] = useState<string[]>([]);
-  const [occupations, setOccupations] = useState<string[]>([]);
-
+  const [proData, setProData] = useState<ExploreProData | undefined>(undefined);
   const router = useRouter();
 
   useEffect(() => {
@@ -24,7 +28,15 @@ const ExploreCard = ({ proId }: { proId: string }) => {
   async function fetchProfessionalData() {
     const { data, error } = await supabase
       .from("profiles")
-      .select("username, first_name, last_name, specializations, occupations")
+      .select(
+        `username, 
+        first_name, 
+        last_name, 
+        specializations, 
+        occupations, 
+        avatar_url, 
+        feature_photo_url`,
+      )
       .eq("id", proId)
       .single();
 
@@ -32,13 +44,17 @@ const ExploreCard = ({ proId }: { proId: string }) => {
       throw new Error(error.message);
     }
     if (data) {
-      setUsername(data.username);
-      setFirstName(data.first_name);
-      setLastName(data.last_name);
-      setSpecializations(data.specializations);
-      setOccupations(data.occupations);
+      setProData({
+        firstName: data.first_name,
+        lastName: data.last_name,
+        occupations: data.occupations,
+        avatar: data.avatar_url,
+        featurePhoto: data.feature_photo_url,
+      });
     }
   }
+
+  if (!proData) return;
 
   return (
     <TouchableOpacity
@@ -48,57 +64,43 @@ const ExploreCard = ({ proId }: { proId: string }) => {
       <View style={styles.cardInner}>
         <View style={styles.imageWrapper}>
           <Image
-            source={require("@/assets/images/haircut1.jpg")}
+            source={{ uri: proData.featurePhoto }}
             style={styles.coverImage}
           />
-          <View style={styles.clientWorkBadge}>
-            <Text style={styles.clientWorkText}>Client Work</Text>
-          </View>
+          <TouchableOpacity style={styles.bookmarkButton}>
+            {/* <BlurView intensity={60} tint="light" style={styles.blur}> */}
+              <Bookmark />
+            {/* </BlurView> */}
+          </TouchableOpacity>
         </View>
-        <View style={styles.infoContainer}>
-          <View style={styles.profileRow}>
-            <View
-              style={styles.wrapper}
-              // onLayout={(e) => setPicWidth(e.nativeEvent.layout.width)}
-            >
-              <View style={styles.imageContainer}>
-                <Image
-                  source={require("@/assets/images/profile-pic.webp")}
-                  style={styles.image}
-                />
-              </View>
-            </View>
-            <View style={styles.profileDetails}>
-              <View style={styles.nameRow}>
-                <Text
-                  style={styles.profileName}
-                >{`${firstName} ${lastName}`}</Text>
-                <BadgeCheck size={18} color={colors.primaryDark} />
-              </View>
-              <View style={styles.locationRow}>
-                <Text style={styles.profileLocation}>
-                  Saint Paul, MN • 0.8 mi
-                </Text>
-              </View>
-              <View style={styles.tagRow}>
-                {occupations.map((occ) => (
-                  <SpecializationTag title={occ} border key={occ} />
-                ))}
-              </View>
-            </View>
+        <View style={styles.cardDetailsContainer}>
+          {/* profile picture */}
+          <View style={styles.avatarContainer}>
+            <Image source={{ uri: proData.avatar }} style={styles.avatar} />
           </View>
-          <View style={styles.footer}>
-            <View>
-              <Text style={styles.startingAtLabel}>STARTING AT</Text>
-              <Text style={styles.price}>
-                $50
-                <Text style={styles.perSession}> / session</Text>
-              </Text>
-            </View>
-            <View style={styles.ratingRow}>
-              <Star size={12} color={colors.primary} fill={colors.primary} />
-              <Text style={styles.ratingText}>4.7</Text>
-            </View>
+
+          {/* name */}
+          <Text style={styles.nameLabel}>
+            {proData.firstName} {proData.lastName}
+          </Text>
+
+          {/* experience */}
+          <View style={[styles.experienceContainer, { marginBottom: 2 }]}>
+            <Award size={fontSize.secondary + 2} color={colors.bodyText} />
+            <Text style={{ color: colors.bodyText, fontSize: fontSize.secondary }}>8 yrs</Text>
+          </View>
+
+          {/* location */}
+          <View style={styles.experienceContainer}>
+            <MapPin size={fontSize.secondary + 2} color={colors.bodyText} />
+            <Text style={{ color: colors.bodyText, fontSize: fontSize.secondary }}>Minneapolis, MN</Text>
+          </View>
+
+          {/* occupations */}
+          <View style={styles.occupationTagContainer}>
+            {proData.occupations.map((o, i) => (
+              <OccupationTag occupation={o} key={i} />
+            ))}
           </View>
         </View>
       </View>
@@ -122,7 +124,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   imageWrapper: {
-    backgroundColor: "grey",
+    backgroundColor: "lightgrey",
     width: "100%",
     aspectRatio: 3 / 2,
   },
@@ -130,139 +132,50 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  clientWorkBadge: {
+  bookmarkButton: {
     position: "absolute",
-    left: 15,
-    bottom: 15,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 5,
-    backgroundColor: "rgba(0, 0, 0, 0.25)",
-  },
-  clientWorkText: {
-    fontSize: 12,
-    color: colors.background,
-    fontWeight: "600",
-  },
-  infoContainer: {
+    right: 15,
+    top: 15,
     backgroundColor: "white",
-    padding: 15,
-    flexDirection: "column",
+    padding: 10,
+    borderRadius: 999,
   },
-  profileRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  profileDetails: {
-    gap: 1,
-    flex: 1,
-  },
-  nameRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-  },
-  locationRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 3,
-  },
-  tagRow: {
-    flexDirection: "row",
-    gap: 5,
-    marginTop: 3,
-    flexWrap: "wrap",
-  },
-  footer: {
-    borderTopWidth: 1,
-    marginTop: 15,
-    paddingTop: 10,
-    borderColor: colors.cardBorder,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  startingAtLabel: {
-    fontSize: 12,
-    color: colors.mutedText,
-  },
-  price: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  perSession: {
-    fontWeight: "400",
-    fontSize: 14,
-    color: colors.mutedText,
-  },
-  ratingRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 3,
-  },
-  ratingText: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  wrapper: {
+  avatarContainer: {
+    height: 80,
     aspectRatio: 1,
-    position: "relative",
-  },
-  imageContainer: {
-    // flex: 1,
-
-    borderRadius: 10,
+    backgroundColor: "white",
     overflow: "hidden",
-    borderColor: colors.primary,
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-  },
-  badge: {
-    position: "absolute",
-    bottom: -5,
-    right: -5,
-    backgroundColor: colors.primary,
-    padding: 3,
-    borderRadius: 6,
-  },
-  cardContainer: {
-    borderWidth: 2,
-    borderColor: colors.cardBorder,
-    padding: 15,
-    marginHorizontal: 20,
-    borderRadius: 15,
-    marginBottom: 10,
-  },
-  profilePicWrapper: {
-    aspectRatio: 1,
+    borderRadius: 999,
     borderWidth: 3,
-    borderColor: colors.primary,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "lightgrey",
+    borderColor: "white",
+    marginTop: -40,
   },
-  profilePicInner: {
-    backgroundColor: "lightgrey",
+  avatar: {
     width: "100%",
     height: "100%",
-    borderRadius: 5,
-    overflow: "hidden",
   },
-  profileName: {
-    fontWeight: "600",
-    fontSize: 18,
-    color: colors.headingText,
+  cardDetailsContainer: {
+    backgroundColor: "white",
+    paddingHorizontal: 15,
+    paddingBottom: 15,
   },
-  profileSalon: {
-    color: colors.bodyText,
-    fontSize: 14,
-    fontWeight: "500",
+  nameLabel: {
+    fontSize: fontSize.heading,
+    fontWeight: fontWeight.semibold,
+    marginTop: 5,
+    marginBottom: 5,
+    color: colors.ink,
   },
-  profileLocation: {
-    color: colors.bodyText,
-    fontSize: 12,
+  experienceContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
   },
+  occupationTagContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+    marginTop: 15,
+  },
+  
 });

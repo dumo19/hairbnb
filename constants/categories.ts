@@ -731,3 +731,8 @@ export const getSpecializationGroups = (
   Object.entries(ServiceCategories[category].specializations).map(
     ([key, options]) => ({ key, options })
   );
+
+export const getCategoryFromOccupation = (occupation: string): CategoryName | undefined =>
+  CategoryNames.find(category =>
+    ServiceCategories[category].occupations.includes(occupation)
+  );

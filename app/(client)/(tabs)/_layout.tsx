@@ -6,20 +6,13 @@ import {
   LayoutGrid,
   MessageCircle,
 } from "lucide-react-native";
+import { NativeTabs } from 'expo-router/unstable-native-tabs';
+
 
 export default function RootLayout() {
   return (
     <Tabs>
-      <Tabs.Screen
-        name="home"
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <LayoutGrid color={color} size={size} />
-          ),
-          title: "home",
-        }}
-      />
+      
       <Tabs.Screen
         name="explore"
         options={{
@@ -30,15 +23,7 @@ export default function RootLayout() {
           title: "explore",
         }}
       />
-      <Tabs.Screen
-        name="bookings"
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color, size, focused }) => (
-            <Calendar color={color} size={size} />
-          ),
-        }}
-      />
+      
       <Tabs.Screen
         name="messages"
         options={{
@@ -58,5 +43,24 @@ export default function RootLayout() {
         }}
       />
     </Tabs>
+    // <NativeTabs>
+    // backgroundColor={"grey"}
+    //   indicatorColor={"blue"}
+    //   <NativeTabs.Trigger name="account">
+    //     <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+    //     <NativeTabs.Trigger.Icon
+    //       src={require('@/assets/images/compass.png')}
+    //       renderingMode="template"
+    //     />
+    //   </NativeTabs.Trigger>
+
+    //   <NativeTabs.Trigger name="explore">
+    //     <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
+    //     <NativeTabs.Trigger.Icon
+    //       src={require('@/assets/images/compass.png')}
+    //       renderingMode="template"
+    //     />
+    //   </NativeTabs.Trigger>
+    // </NativeTabs>
   );
 }

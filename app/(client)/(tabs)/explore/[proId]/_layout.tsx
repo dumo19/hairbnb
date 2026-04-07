@@ -1,15 +1,28 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { Stack } from 'expo-router'
+import { ProContext } from "@/context/pro-contex";
+import { Stack, useLocalSearchParams } from "expo-router";
+import React from "react";
+import { StyleSheet } from "react-native";
 
 const ProfessionalLayout = () => {
+  const { proId } = useLocalSearchParams();
+  const normalizedProId = typeof proId === "string" ? proId : proId?.[0];
+  console.log(proId);
+  if (!normalizedProId) return;
+
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{headerShown: false}}/>
-    </Stack>
-  )
-}
+    <ProContext.Provider value={{ proId: normalizedProId }}>
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="portfolio-gallery"
+          options={{ headerShown: false, presentation: "modal"}}
+          
+        />
+      </Stack>
+    </ProContext.Provider>
+  );
+};
 
-export default ProfessionalLayout
+export default ProfessionalLayout;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});

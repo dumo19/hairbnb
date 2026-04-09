@@ -1,6 +1,6 @@
 import CategoryButton from "@/components/CategoryButton";
 import ExploreCard from "@/components/ExploreCard";
-import { fontSize, fontWeight } from "@/constants/fonts";
+import { fontSize, fontWeight } from "@/constants/theme";
 import { colors } from "@/constants/theme";
 import { useFilterStore } from "@/lib/filter-store";
 import { supabase } from "@/lib/supabase";

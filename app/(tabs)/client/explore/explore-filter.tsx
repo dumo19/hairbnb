@@ -5,7 +5,7 @@ import {
   getSpecializationGroups,
   getSpecializationLabel,
 } from "@/constants/categories";
-import { fontSize, fontWeight } from "@/constants/fonts";
+import { fontSize, fontWeight } from "@/constants/theme";
 import { colors } from "@/constants/theme";
 import { useFilterStore } from "@/lib/filter-store";
 import CategoryIcon from "@/utils/CategoryIcon";
@@ -53,7 +53,7 @@ export const CategoryItem = ({ label, selected, onPress }: CategoryItemProp) => 
       <CategoryIcon
         category={label}
         size={fontSize.secondary + 2}
-        color={selected ? colors.primaryDark : colors.mutedText}
+        color={selected ? colors.primaryDark : colors.bodyText}
       />
       <Text style={selected ? styles.selectedTagLabel : styles.TagLabel}>
         {label}
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
   },
 
   selectedTagContainer: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.primaryTint,
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 99,
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
   },
   TagLabel: {
-    color: colors.mutedText,
+    color: colors.bodyText,
     fontSize: fontSize.secondary,
     fontWeight: fontWeight.medium,
   },

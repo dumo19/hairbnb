@@ -1,4 +1,4 @@
-import { colors } from "@/constants/colors";
+import { colors } from "@/constants/theme";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -13,7 +13,7 @@ const ListContainer = ({
     
     <View
       style={{
-        backgroundColor: "#FAF8F7",
+        backgroundColor: colors.cardBackground,
         marginHorizontal: 20,
         marginBottom: 20,
         padding: 20,

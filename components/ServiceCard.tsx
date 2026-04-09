@@ -1,5 +1,5 @@
-import { colors } from "@/constants/colors";
-import { fontSize, fontWeight } from "@/constants/fonts";
+import { colors } from "@/constants/theme";
+import { fontSize, fontWeight } from "@/constants/theme";
 import { Banknote, Clock, Coins, HandCoins, Scissors } from "lucide-react-native";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -38,11 +38,11 @@ export default function ServiceCard({
           <View style={styles.leftColumn}>
             <Text style={styles.titleText}>{title}</Text>
             <View style={styles.infoRow}>
-              <Clock size={fontSize.secondary} color={colors.ashMid} />
+              <Clock size={fontSize.secondary + 3} color={colors.captionText} />
               <Text style={styles.orgText}>{time}</Text>
             </View>
             <View style={styles.infoRow}>
-              <Banknote size={fontSize.secondary} color={colors.ashMid} />
+              <Banknote size={fontSize.secondary + 3} color={colors.captionText} />
               <Text style={styles.priceText}>
                 <Text style={styles.startingFromText}>Starting at</Text> ${price}
               </Text>
@@ -102,32 +102,32 @@ const styles = StyleSheet.create({
   titleText: {
     fontWeight: fontWeight.medium,
     fontSize: fontSize.body,
-    color: colors.ink,
+    color: colors.headingText,
   },
   yearBadge: {
     fontSize: fontSize.secondary,
     fontWeight: fontWeight.semibold,
-    color: colors.ink,
+    color: colors.headingText,
     // backgroundColor: "white",
     paddingVertical: 3,
     paddingHorizontal: 6,
     // borderWidth: 1,
     borderRadius: 999,
-    borderColor: colors.coral,
+    borderColor: colors.primary,
     alignSelf: "flex-start",
     textAlign: "right",
   },
   orgText: {
     fontSize: fontSize.secondary,
-    fontWeight: fontWeight.medium,
+    fontWeight: fontWeight.regular,
     flexShrink: 1,
-    color: colors.ashMid,
+    color: colors.captionText,
   },
   priceText: {
     fontSize: fontSize.secondary,
     fontWeight: fontWeight.medium,
     flexShrink: 1,
-    color: colors.ashMid,
+    color: colors.captionText,
   },
   startingFromText: {
     fontWeight: fontWeight.regular,
@@ -136,10 +136,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexShrink: 1,
     marginRight: 10,
+    gap: 2
   },
 
   startingAt: {
-    color: colors.ashMid,
+    color: colors.bodyText,
     fontSize: fontSize.caption,
     fontWeight: fontWeight.regular,
   },

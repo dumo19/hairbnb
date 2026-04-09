@@ -16,7 +16,7 @@ import {
 import ContactCard from "@/components/ContactCard";
 import ListContainer from "@/components/ListContainer";
 import { OccupationTag } from "@/components/OccupationTag";
-import { fontSize, fontWeight } from "@/constants/fonts";
+import { fontSize, fontWeight } from "@/constants/theme";
 import { supabase } from "@/lib/supabase";
 import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
@@ -82,16 +82,6 @@ export type Contact = {
   type: string;
   info: string;
 };
-
-// const contactInfo: Contact[] = [
-//   { type: "phone_number", info: "+1 (651)-467-0872" },
-//   { type: "email_address", info: "harry@harryssalon.com" },
-//   { type: "website", info: "harryssalon.com" },
-//   { type: "store_address", info: "1234 Main Street\nMinneapolis, MN 55414" },
-//   { type: "facebook_handle", info: "@harryssalon" },
-//   { type: "instagram_handle", info: "@harryssalon" },
-//   { type: "tiktok_handle", info: "@harryssalon" },
-// ];
 
 const SectionHeader = React.memo(
   ({
@@ -206,12 +196,18 @@ const PageHeader = React.memo(({ proData }: { proData: ProfileProData }) => {
           {proData.first_name} {proData.last_name}
         </Text>
         <View style={[styles.experienceContainer, { marginBottom: 2 }]}>
-          <Award size={16} color={colors.bodyText} />
-          <Text style={{ color: colors.bodyText }}>8 yrs experience</Text>
+          <Award size={fontSize.secondary + 3} color={colors.bodyText} />
+          <Text
+            style={{ color: colors.bodyText, fontSize: fontSize.secondary }}
+          >
+            8 yrs experience
+          </Text>
         </View>
         <View style={styles.experienceContainer}>
-          <MapPin size={16} color={colors.bodyText} />
-          <Text style={{ color: colors.bodyText }}>
+          <MapPin size={fontSize.secondary + 3} color={colors.bodyText} />
+          <Text
+            style={{ color: colors.bodyText, fontSize: fontSize.secondary }}
+          >
             {proData.location?.shop_name} • {proData.location?.city}
           </Text>
         </View>
@@ -296,23 +292,54 @@ const Services = React.memo(({ services }: { services: Service[] }) => {
 });
 
 const Contact = React.memo(({ contacts }: { contacts: Contacts }) => {
-  const entries = Object.entries(contacts).filter(
+  const validEntries = Object.entries(contacts).filter(
     (entry): entry is [string, string] => entry[1] !== null && entry[1] !== "",
   );
 
-  console.log("contact component:", entries)
+  // Categorize keys
+  const phoneEmailWebsite = ["phone_number", "email_address", "website"];
+  const address = ["store_address"];
+  const social = [
+    "instagram_handle",
+    "facebook_handle",
+    "twitter_handle",
+    "tiktok_handle",
+  ];
 
-  const contactCards = entries.map(([key, value], i) => (
-    <ContactCard
-      // contact={contact}
-      key={i}
-      label={key}
-      value={value}
-      top={i == 0}
-      bottom={i == entries.length - 1}
-    />
-  ));
-  return <ListContainer items={contactCards} />;
+  const groupEntries = (keys: string[]) =>
+    validEntries.filter(([key]) => keys.includes(key));
+
+  const renderGroup = (entries: [string, string][]) => {
+    return entries.map(([key, value], i) => (
+      <ContactCard
+        key={key}
+        label={key}
+        value={value}
+        top={i === 0}
+        bottom={i === entries.length - 1}
+      />
+    ));
+  };
+
+  return (
+    <>
+      {/* <Text style={styles.contactSubheading}>Contacts</Text> */}
+      {groupEntries(phoneEmailWebsite).length > 0 && (
+        <ListContainer items={renderGroup(groupEntries(phoneEmailWebsite))} />
+      )}
+
+      <Text style={styles.contactSubheading}>Store Address</Text>
+      {/* <SectionHeader title={"Store Address"}/> */}
+      {groupEntries(address).length > 0 && (
+        <ListContainer items={renderGroup(groupEntries(address))} />
+      )}
+
+      <Text style={styles.contactSubheading}>Socials</Text>
+      {groupEntries(social).length > 0 && (
+        <ListContainer items={renderGroup(groupEntries(social))} />
+      )}
+    </>
+  );
 });
 
 export default function UserPage() {
@@ -327,7 +354,7 @@ export default function UserPage() {
   const handleGalleryNavigation = useCallback(() => {
     if (!proData) return;
     router.push({
-      pathname: `/explore/${proId}/portfolio-gallery` as any,
+      pathname: `/client/explore/${proId}/portfolio-gallery` as any,
       params: {
         photos: JSON.stringify(proData.portfolio_photo_urls),
         firstName: proData.first_name,
@@ -521,7 +548,7 @@ export default function UserPage() {
 
         <SectionHeader
           title={`${proData.first_name}'s portfolio`}
-          path={`/explore/${proId}/portfolio-gallery`}
+          path={`/client/explore/${proId}/portfolio-gallery`}
           onNavigate={handleGalleryNavigation}
         />
         <Portfolio urls={proData.portfolio_photo_urls} />
@@ -532,10 +559,18 @@ export default function UserPage() {
         <SectionHeader title={"Certifications & Licenses"} />
         <Credentials credentials={proData.credentials} />
 
-        <TabBar />
-        {selectedTab === "Services" && <Services services={proData.services} />}
+        <SectionHeader title={"Services"} />
+        <Services services={proData.services} />
+
+        <SectionHeader title={"Contact"}/>
+        <Contact contacts={proData.contacts} />
+
+        
+
+        {/* <TabBar /> */}
+        {/* {selectedTab === "Services" && <Services services={proData.services} />} */}
         {/* {selectedTab === "Reviews" && <Reviews />} */}
-        {selectedTab === "Contact" && <Contact contacts={proData.contacts}/>}
+        {/* {selectedTab === "Contact" && <Contact contacts={proData.contacts} />} */}
       </ScrollView>
 
       <FloatingButtons
@@ -596,6 +631,7 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.semibold,
     marginTop: 5,
     marginBottom: 5,
+    color: colors.headingText,
   },
   experienceContainer: {
     flexDirection: "row",
@@ -622,7 +658,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     borderWidth: 3,
     borderColor: "white",
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.primaryTint,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -726,12 +762,19 @@ const styles = StyleSheet.create({
     height: 36,
     aspectRatio: 1,
     borderRadius: 999,
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.primaryTint,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 10,
   },
   contactText: {},
+  contactSubheading: {
+    marginHorizontal: 20,
+    marginBottom: 5,
+    fontSize: fontSize.body,
+    fontWeight: fontWeight.medium,
+    color: colors.headingText
+  },
 
   // ======================
   // Floating Buttons

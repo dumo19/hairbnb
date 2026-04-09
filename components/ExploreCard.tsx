@@ -1,5 +1,5 @@
-import { colors } from "@/constants/colors";
-import { fontSize, fontWeight } from "@/constants/fonts";
+import { colors } from "@/constants/theme";
+import { fontSize, fontWeight } from "@/constants/theme";
 import { supabase } from "@/lib/supabase";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -85,7 +85,7 @@ const ExploreCard = ({ proId }: { proId: string }) => {
 
           {/* experience */}
           <View style={[styles.experienceContainer, { marginBottom: 2 }]}>
-            <Award size={fontSize.secondary + 2} color={colors.bodyText} />
+            <Award size={fontSize.secondary + 3} color={colors.bodyText} />
             <Text
               style={{ color: colors.bodyText, fontSize: fontSize.secondary }}
             >
@@ -95,7 +95,7 @@ const ExploreCard = ({ proId }: { proId: string }) => {
 
           {/* location */}
           <View style={styles.experienceContainer}>
-            <MapPin size={fontSize.secondary + 2} color={colors.bodyText} />
+            <MapPin size={fontSize.secondary + 3} color={colors.bodyText} />
             <Text
               style={{ color: colors.bodyText, fontSize: fontSize.secondary }}
             >
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.semibold,
     marginTop: 5,
     marginBottom: 5,
-    color: colors.ink,
+    color: colors.headingText,
   },
   experienceContainer: {
     flexDirection: "row",

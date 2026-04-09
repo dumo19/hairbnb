@@ -1,5 +1,5 @@
-import { colors } from "@/constants/colors";
-import { fontSize, fontWeight } from "@/constants/fonts";
+import { colors } from "@/constants/theme";
+import { fontSize, fontWeight } from "@/constants/theme";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Columns2, Square, X } from "lucide-react-native";
 import React, { useState } from "react";
@@ -42,9 +42,9 @@ const PortfolioGalleryPage = () => {
             onPress={handleColumnToggle}
           >
             {displayColumns === 2 ? (
-              <Square color={colors.ink} size={22} />
+              <Square color={colors.headingText} size={22} />
             ) : (
-              <Columns2 color={colors.ink} size={22} />
+              <Columns2 color={colors.headingText} size={22} />
             )}
           </TouchableOpacity>
           <Text
@@ -57,7 +57,7 @@ const PortfolioGalleryPage = () => {
           </Text>
         </View>
         <TouchableOpacity onPress={() => router.back()}>
-          <X color={colors.ink} size={22} />
+          <X color={colors.headingText} size={22} />
         </TouchableOpacity>
       </View>
       <FlatList
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   columnButton: {
     height: 40,
     aspectRatio: 1,
-    backgroundColor: colors.linen,
+    backgroundColor: colors.cardBackground,
     borderWidth: 1,
     borderRadius: 999,
     borderColor: colors.cardBorder,

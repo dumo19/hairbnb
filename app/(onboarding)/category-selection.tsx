@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CategoryItem } from "../(tabs)/client/explore/explore-filter";
-import { fontSize, fontWeight } from "@/constants/fonts";
-import { colors } from "@/constants/colors";
+import { fontSize, fontWeight } from "@/constants/theme";
+import { colors } from "@/constants/theme";
 
 const CategoriesPage = () => {
   const [selectedCats, setSelectedCats] = useState<string[]>([]);
@@ -17,7 +17,7 @@ const CategoriesPage = () => {
 
   return (
     <SafeAreaView style={{paddingHorizontal:20}}>
-      <Text style={{fontSize: fontSize.display, color: colors.ink, fontWeight: fontWeight.regular}}>What industries are you in?</Text>
+      <Text style={{fontSize: fontSize.display, color: colors.headingText, fontWeight: fontWeight.regular}}>What industries are you in?</Text>
       <Text style={{fontSize: fontSize.body}}>Select all that apply</Text>
       <View style={{flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: 20}}>
         {CategoryNames.map((category, i) => (

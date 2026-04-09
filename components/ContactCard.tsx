@@ -1,4 +1,4 @@
-import { colors } from "@/constants/colors";
+import { colors, fontSize } from "@/constants/theme";
 import ContactIcon from "@/utils/ContactIcon";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -15,7 +15,7 @@ const ContactCard = ({
   bottom: boolean;
 }) => {
   const iconSize = 18;
-  const iconColor = colors.coralDark;
+  const iconColor = colors.primaryDark;
   const paddingVertical = 15;
 
   if (
@@ -37,10 +37,19 @@ const ContactCard = ({
         },
       ]}
     >
-      <View style={styles.contactIconContainer}>
+      <ContactIcon
+        icon={label}
+        size={fontSize.title}
+        color={colors.captionText}
+      />
+
+      <Text>{value}</Text>
+
+      {/* <View style={styles.contactIconContainer}>
         <ContactIcon icon={label} size={iconSize} color={iconColor} />
       </View>
-      <Text style={styles.contactText}>{value}</Text>
+    
+      <Text style={styles.contactText}>{value}</Text> */}
     </View>
   );
 };
@@ -50,8 +59,9 @@ export default ContactCard;
 const styles = StyleSheet.create({
   contactItem: {
     flexDirection: "row",
-    alignItems: "center",
+    // alignItems: "center",
     borderColor: colors.cardBorder,
+    gap: 15,
   },
   contactIconContainer: {
     height: 36,

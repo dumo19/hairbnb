@@ -1,5 +1,5 @@
-import { colors } from "@/constants/colors";
-import { fontSize, fontWeight } from "@/constants/fonts";
+import { colors } from "@/constants/theme";
+import { fontSize, fontWeight } from "@/constants/theme";
 import { Calendar, School } from "lucide-react-native";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -42,11 +42,11 @@ export default function CredentialCard({
           <View style={styles.leftColumn}>
             <Text style={styles.titleText}>{title}</Text>
             <View style={styles.infoRow}>
-              <School size={fontSize.secondary} color={colors.ashMid} />
+              <School size={fontSize.secondary + 3} color={colors.captionText} />
               <Text style={styles.orgText}>{org}</Text>
             </View>
             <View style={styles.infoRow}>
-              <Calendar size={fontSize.secondary} color={colors.ashMid} />
+              <Calendar size={fontSize.secondary + 3} color={colors.captionText} />
               <Text style={styles.yearText}>{year}</Text>
             </View>
           </View>
@@ -61,13 +61,6 @@ export default function CredentialCard({
 const styles = StyleSheet.create({
   container: {
     borderColor: colors.cardBorder,
-    // marginBottom: 10,
-    // marginHorizontal: 20,
-    // borderTopWidth: 1,
-    // paddingVertical: 10,
-    // padding: 15,
-    // borderRadius: 10,
-    // backgroundColor: colors.linen,
   },
   row: {
     flexDirection: "row",
@@ -96,6 +89,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexShrink: 1,
     marginRight: 10,
+    gap: 2
   },
   textColumn: {
     flex: 1,
@@ -110,32 +104,32 @@ const styles = StyleSheet.create({
   titleText: {
     fontWeight: fontWeight.medium,
     fontSize: fontSize.body,
-    color: colors.ink,
+    color: colors.headingText,
   },
   yearBadge: {
     fontSize: fontSize.secondary,
     fontWeight: fontWeight.semibold,
-    color: colors.coralDark,
-    backgroundColor: "white",
+    color: colors.primaryDark,
+    backgroundColor: colors.background,
     paddingVertical: 3,
     paddingHorizontal: 6,
     borderWidth: 1,
     borderRadius: 999,
-    borderColor: colors.coral,
+    borderColor: colors.primary,
     alignSelf: "flex-start",
   },
   orgText: {
     fontSize: fontSize.secondary,
-    fontWeight: fontWeight.medium,
+    fontWeight: fontWeight.regular,
     flexShrink: 1,
-    color: colors.ashMid,
+    color: colors.captionText,
     flexWrap: "wrap",
   },
   yearText: {
     fontSize: fontSize.secondary,
     fontWeight: fontWeight.regular,
     flexShrink: 1,
-    color: colors.ashMid,
+    color: colors.captionText,
     flexWrap: "wrap",
   },
   infoRow: {

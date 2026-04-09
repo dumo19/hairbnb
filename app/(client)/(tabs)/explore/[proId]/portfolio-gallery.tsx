@@ -1,65 +1,103 @@
+import { colors } from "@/constants/colors";
 import { fontSize, fontWeight } from "@/constants/fonts";
-import { usePro } from "@/context/pro-contex";
-import { supabase } from "@/lib/supabase";
-import { Columns2, Square } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { Columns2, Square, X } from "lucide-react-native";
+import React, { useState } from "react";
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const PortfolioGalleryPage = () => {
-  const { proId } = usePro();
-  const [portfolioUrls, setPortfolioUrls] = useState<string[]>([]);
-  const [firstName, setFirstName] = useState<string>("");
-  const [displayColumns, setDisplayColumns] = useState<number>(1)
-
-  useEffect(() => {
-    fetchPortfolio();
-  }, [proId]);
-
-  const fetchPortfolio = async () => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("first_name, portfolio_photo_urls")
-      .eq("id", proId)
-      .single();
-
-    if (error) throw new Error(error.message);
-    if (data) {
-      setPortfolioUrls(data.portfolio_photo_urls);
-      setFirstName(data.first_name);
-    }
-  };
+  const router = useRouter();
+  const { photos, firstName } = useLocalSearchParams();
+  const photoUrls: string[] = photos ? JSON.parse(photos as string) : [];
+  // console.log(photoUrls)
+  const [displayColumns, setDisplayColumns] = useState<number>(1);
 
   const handleColumnToggle = () => {
-    setDisplayColumns(((displayColumns) % 2) + 1)
-    // console.log("display:", displayColumns)
-  }
-
- 
-  // console.log("display on load:", displayColumns)
+    setDisplayColumns((displayColumns % 2) + 1);
+  };
 
   return (
-    <View>
+    <View style={{ backgroundColor: "white" }}>
       <View
         style={{
           padding: 20,
+          paddingBottom: 10,
           flexDirection: "row",
           justifyContent: "space-between",
-          alignItems: "center"
+          alignItems: "center",
+          borderBottomWidth: 1,
+          borderColor: colors.cardBorder,
         }}
       >
-        <Text
-          style={{ fontSize: fontSize.title, fontWeight: fontWeight.semibold }}
-        >
-          {firstName}'s portfolio
-        </Text>
-        <TouchableOpacity onPress={handleColumnToggle}>
-          {displayColumns === 2 ? <Square/> : <Columns2/>}
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          <TouchableOpacity
+            style={styles.columnButton}
+            onPress={handleColumnToggle}
+          >
+            {displayColumns === 2 ? (
+              <Square color={colors.ink} size={22} />
+            ) : (
+              <Columns2 color={colors.ink} size={22} />
+            )}
+          </TouchableOpacity>
+          <Text
+            style={{
+              fontSize: fontSize.title,
+              fontWeight: fontWeight.semibold,
+            }}
+          >
+            {firstName}'s portfolio
+          </Text>
+        </View>
+        <TouchableOpacity onPress={() => router.back()}>
+          <X color={colors.ink} size={22} />
         </TouchableOpacity>
       </View>
+      <FlatList
+        key={displayColumns}
+        data={photoUrls}
+        keyExtractor={(_, i) => i.toString()}
+        contentContainerStyle={{
+          paddingTop: 20,
+          gap: 10,
+          paddingHorizontal: 20,
+          paddingBottom: 150,
+        }}
+        columnWrapperStyle={displayColumns > 1 ? { gap: 10 } : undefined}
+        numColumns={displayColumns}
+        renderItem={({ item }) => (
+          <View style={{ flex: 1 }}>
+            <Image source={{ uri: item }} style={styles.image} />
+          </View>
+        )}
+      />
     </View>
   );
 };
 
 export default PortfolioGalleryPage;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  columnButton: {
+    height: 40,
+    aspectRatio: 1,
+    backgroundColor: colors.linen,
+    borderWidth: 1,
+    borderRadius: 999,
+    borderColor: colors.cardBorder,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  image: {
+    width: "100%",
+    aspectRatio: 1,
+    borderRadius: 15,
+  },
+});

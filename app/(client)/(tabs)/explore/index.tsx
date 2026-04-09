@@ -63,16 +63,16 @@ export default function ExplorePage() {
   }
 
   return (
-    <SafeAreaView edges={["top"]} style={styles.container}>
+    <SafeAreaView edges={[]} style={[styles.container, ]}>
       <View
         style={[styles.pageHeader]}
         onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}
       >
-        <View style={{ flexDirection: "row", marginHorizontal: 20, gap: 10 }}>
+        <View style={{ flexDirection: "row", marginHorizontal: 20, gap: 10, paddingTop: inset.top }}>
           <View
             style={{
               flexDirection: "row",
-              borderWidth: 2,
+              borderWidth: 1,
               padding: 10,
               borderRadius: 999,
               flex: 1,
@@ -125,13 +125,13 @@ const styles = StyleSheet.create({
     // position: "absolute",
     // left: 0,
     // right: 0,
-    backgroundColor: colors.background,
+    backgroundColor: "white",
     // zIndex: 100,
     paddingBottom: 15,
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     borderBottomColor: colors.cardBorder,
   },
-  container: { flex: 1, backgroundColor: colors.background },
+  container: { flex: 1, backgroundColor: "white" },
   scrollView: { flex: 1 },
   sectionHeaderContainer: {
     paddingHorizontal: 20,

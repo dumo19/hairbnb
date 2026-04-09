@@ -20,7 +20,7 @@ export const OccupationTag = ({ occupation }: { occupation: string }) => {
         flexDirection: "row",
         alignItems: "center",
         gap: 5,
-        borderWidth: 1,
+        // borderWidth: 1,
         borderColor: colors.coral
       }}
     >

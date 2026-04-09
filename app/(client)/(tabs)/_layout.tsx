@@ -7,12 +7,12 @@ import {
   MessageCircle,
 } from "lucide-react-native";
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { colors } from "@/constants/colors";
 
 
 export default function RootLayout() {
   return (
-    <Tabs>
-      
+    <Tabs screenOptions={{headerShown: false, tabBarActiveTintColor: colors.coralDark}}>
       <Tabs.Screen
         name="explore"
         options={{

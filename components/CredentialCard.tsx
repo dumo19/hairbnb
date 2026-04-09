@@ -1,6 +1,6 @@
 import { colors } from "@/constants/colors";
 import { fontSize, fontWeight } from "@/constants/fonts";
-import { Award } from "lucide-react-native";
+import { Calendar, School } from "lucide-react-native";
 import { StyleSheet, Text, View } from "react-native";
 
 /**
@@ -39,13 +39,19 @@ export default function CredentialCard({
           <Award color={colors.coral} size={20} />
         </View> */}
         <View style={styles.textContainer}>
-          <View style={styles.textColumn}>
-            <View style={styles.titleRow}>
-              <Text style={styles.titleText}>{title}</Text>
-              <Text style={styles.yearBadge}>{year}</Text>
+          <View style={styles.leftColumn}>
+            <Text style={styles.titleText}>{title}</Text>
+            <View style={styles.infoRow}>
+              <School size={fontSize.secondary} color={colors.ashMid} />
+              <Text style={styles.orgText}>{org}</Text>
             </View>
-            <Text style={styles.orgText}>{org}</Text>
+            <View style={styles.infoRow}>
+              <Calendar size={fontSize.secondary} color={colors.ashMid} />
+              <Text style={styles.yearText}>{year}</Text>
+            </View>
           </View>
+
+          {/* <Text style={styles.yearBadge}>{year}</Text> */}
         </View>
       </View>
     </View>
@@ -60,7 +66,7 @@ const styles = StyleSheet.create({
     // borderTopWidth: 1,
     // paddingVertical: 10,
     // padding: 15,
-    borderRadius: 10,
+    // borderRadius: 10,
     // backgroundColor: colors.linen,
   },
   row: {
@@ -69,19 +75,27 @@ const styles = StyleSheet.create({
   iconContainer: {
     backgroundColor: "white",
     borderWidth: 1,
-    height: 39,
+    height: 36,
     aspectRatio: 1,
     borderRadius: 999,
     justifyContent: "center",
     alignItems: "center",
     borderColor: colors.cardBorder,
+    marginRight: 10,
   },
   textContainer: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    // backgroundColor: "orange",
     // marginLeft: 10,
+    // flexWrap: "wrap"
+  },
+  leftColumn: {
+    flex: 1,
+    flexShrink: 1,
+    marginRight: 10,
   },
   textColumn: {
     flex: 1,
@@ -91,6 +105,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    flexWrap: "wrap",
   },
   titleText: {
     fontWeight: fontWeight.medium,
@@ -99,20 +114,33 @@ const styles = StyleSheet.create({
   },
   yearBadge: {
     fontSize: fontSize.secondary,
-    fontWeight: fontWeight.medium,
+    fontWeight: fontWeight.semibold,
     color: colors.coralDark,
     backgroundColor: "white",
     paddingVertical: 3,
     paddingHorizontal: 6,
     borderWidth: 1,
     borderRadius: 999,
-    borderColor: colors.cardBorder,
+    borderColor: colors.coral,
     alignSelf: "flex-start",
   },
   orgText: {
     fontSize: fontSize.secondary,
+    fontWeight: fontWeight.medium,
+    flexShrink: 1,
+    color: colors.ashMid,
+    flexWrap: "wrap",
+  },
+  yearText: {
+    fontSize: fontSize.secondary,
     fontWeight: fontWeight.regular,
     flexShrink: 1,
     color: colors.ashMid,
+    flexWrap: "wrap",
+  },
+  infoRow: {
+    flexDirection: "row",
+    gap: 5,
+    alignItems: "center",
   },
 });

@@ -1,6 +1,6 @@
 import { colors } from "@/constants/colors";
 import { fontSize, fontWeight } from "@/constants/fonts";
-import { Scissors } from "lucide-react-native";
+import { Banknote, Clock, Coins, HandCoins, Scissors } from "lucide-react-native";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function ServiceCard({
@@ -35,13 +35,23 @@ export default function ServiceCard({
           <Scissors color={colors.coral} size={20} />
         </View> */}
         <View style={styles.textContainer}>
-          <View style={styles.textColumn}>
-            <View style={styles.titleRow}>
-              <Text style={styles.titleText}>{title}</Text>
-              <Text style={styles.yearBadge}><Text style={{color: colors.ashMid, fontSize: fontSize.caption, fontWeight: fontWeight.regular}}>Starting at </Text>${price}</Text>
+          <View style={styles.leftColumn}>
+            <Text style={styles.titleText}>{title}</Text>
+            <View style={styles.infoRow}>
+              <Clock size={fontSize.secondary} color={colors.ashMid} />
+              <Text style={styles.orgText}>{time}</Text>
             </View>
-            <Text style={styles.orgText}>{time}</Text>
+            <View style={styles.infoRow}>
+              <Banknote size={fontSize.secondary} color={colors.ashMid} />
+              <Text style={styles.priceText}>
+                <Text style={styles.startingFromText}>Starting at</Text> ${price}
+              </Text>
+            </View>
           </View>
+
+          {/* <Text style={styles.yearBadge}>
+            <Text style={styles.startingAt}>from </Text>${price}
+          </Text> */}
         </View>
       </View>
     </View>
@@ -56,7 +66,7 @@ const styles = StyleSheet.create({
     // borderTopWidth: 1,
     // paddingVertical: 10,
     // padding: 15,
-    borderRadius: 10,
+    // borderRadius: 10,
     // backgroundColor: colors.linen,
   },
   row: {
@@ -65,12 +75,13 @@ const styles = StyleSheet.create({
   iconContainer: {
     backgroundColor: "white",
     borderWidth: 1,
-    // height: 39,
+    height: 36,
     aspectRatio: 1,
     borderRadius: 999,
     justifyContent: "center",
     alignItems: "center",
     borderColor: colors.cardBorder,
+    marginRight: 10,
   },
   textContainer: {
     flex: 1,
@@ -95,20 +106,46 @@ const styles = StyleSheet.create({
   },
   yearBadge: {
     fontSize: fontSize.secondary,
-    fontWeight: fontWeight.medium,
-    color: colors.coralDark,
-    backgroundColor: "white",
+    fontWeight: fontWeight.semibold,
+    color: colors.ink,
+    // backgroundColor: "white",
     paddingVertical: 3,
     paddingHorizontal: 6,
-    borderWidth: 1,
+    // borderWidth: 1,
     borderRadius: 999,
-    borderColor: colors.cardBorder,
+    borderColor: colors.coral,
     alignSelf: "flex-start",
+    textAlign: "right",
   },
   orgText: {
     fontSize: fontSize.secondary,
-    fontWeight: fontWeight.regular,
+    fontWeight: fontWeight.medium,
     flexShrink: 1,
     color: colors.ashMid,
+  },
+  priceText: {
+    fontSize: fontSize.secondary,
+    fontWeight: fontWeight.medium,
+    flexShrink: 1,
+    color: colors.ashMid,
+  },
+  startingFromText: {
+    fontWeight: fontWeight.regular,
+  },
+  leftColumn: {
+    flex: 1,
+    flexShrink: 1,
+    marginRight: 10,
+  },
+
+  startingAt: {
+    color: colors.ashMid,
+    fontSize: fontSize.caption,
+    fontWeight: fontWeight.regular,
+  },
+  infoRow: {
+    flexDirection: "row",
+    gap: 5,
+    alignItems: "center",
   },
 });

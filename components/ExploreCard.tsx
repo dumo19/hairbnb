@@ -1,13 +1,12 @@
 import { colors } from "@/constants/colors";
+import { fontSize, fontWeight } from "@/constants/fonts";
 import { supabase } from "@/lib/supabase";
-import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { Award, Bookmark, MapPin } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { OccupationTag } from "./OccupationTag";
-import { fontSize, fontWeight } from "@/constants/fonts";
 
 type ExploreProData = {
   firstName: string;
@@ -69,7 +68,7 @@ const ExploreCard = ({ proId }: { proId: string }) => {
           />
           <TouchableOpacity style={styles.bookmarkButton}>
             {/* <BlurView intensity={60} tint="light" style={styles.blur}> */}
-              <Bookmark />
+            <Bookmark />
             {/* </BlurView> */}
           </TouchableOpacity>
         </View>
@@ -87,13 +86,21 @@ const ExploreCard = ({ proId }: { proId: string }) => {
           {/* experience */}
           <View style={[styles.experienceContainer, { marginBottom: 2 }]}>
             <Award size={fontSize.secondary + 2} color={colors.bodyText} />
-            <Text style={{ color: colors.bodyText, fontSize: fontSize.secondary }}>8 yrs</Text>
+            <Text
+              style={{ color: colors.bodyText, fontSize: fontSize.secondary }}
+            >
+              8 yrs
+            </Text>
           </View>
 
           {/* location */}
           <View style={styles.experienceContainer}>
             <MapPin size={fontSize.secondary + 2} color={colors.bodyText} />
-            <Text style={{ color: colors.bodyText, fontSize: fontSize.secondary }}>Minneapolis, MN</Text>
+            <Text
+              style={{ color: colors.bodyText, fontSize: fontSize.secondary }}
+            >
+              Minneapolis, MN
+            </Text>
           </View>
 
           {/* occupations */}
@@ -113,15 +120,18 @@ export default ExploreCard;
 const styles = StyleSheet.create({
   cardTouchable: {
     paddingHorizontal: 20,
+    // paddingBottom: 20,
     shadowColor: "#1A1A1A",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.1,
     shadowRadius: 16,
     marginBottom: 20,
+
   },
   cardInner: {
     borderRadius: 15,
     overflow: "hidden",
+    
   },
   imageWrapper: {
     backgroundColor: "lightgrey",
@@ -158,6 +168,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingHorizontal: 15,
     paddingBottom: 15,
+    // borderWidth: 2,
+    // borderTopWidth: 0,
+    // borderColor: colors.cardBorder,
   },
   nameLabel: {
     fontSize: fontSize.heading,
@@ -177,5 +190,4 @@ const styles = StyleSheet.create({
     gap: 10,
     marginTop: 15,
   },
-  
 });

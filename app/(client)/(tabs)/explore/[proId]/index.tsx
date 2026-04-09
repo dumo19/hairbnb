@@ -16,10 +16,10 @@ import {
 import ContactCard from "@/components/ContactCard";
 import ListContainer from "@/components/ListContainer";
 import { OccupationTag } from "@/components/OccupationTag";
+import { fontSize, fontWeight } from "@/constants/fonts";
 import { supabase } from "@/lib/supabase";
-import { BlurView } from "expo-blur";
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ImageBackground,
   Pressable,
@@ -30,16 +30,19 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { fontSize, fontWeight } from "@/constants/fonts";
 
 type ProfileProData = {
   first_name: string;
   last_name: string;
   occupations: string[];
   specializations: string[];
+  credentials: Credential[];
+  services: Service[];
+  contacts: Contacts;
   avatar_url: string;
   feature_photo_url: string;
   bio: string;
+  portfolio_photo_urls: string[];
   location: Locaton;
 };
 
@@ -51,107 +54,131 @@ type Locaton = {
   is_mobile: boolean;
 };
 
+type Credential = {
+  title: string;
+  organization: string;
+  year: string;
+  category: string;
+};
+
+type Service = {
+  title: string;
+  time: string;
+  price: number;
+  category: string;
+};
+
+type Contacts = {
+  phone_number: string | null;
+  email_address: string | null;
+  website: string | null;
+  store_address: string | null;
+  facebook_handle: string | null;
+  instagram_handle: string | null;
+  tiktok_handle: string | null;
+};
+
 export type Contact = {
   type: string;
   info: string;
 };
 
-const contactInfo: Contact[] = [
-  { type: "phone_number", info: "+1 (651)-467-0872" },
-  { type: "email_address", info: "harry@harryssalon.com" },
-  { type: "website", info: "harryssalon.com" },
-  { type: "store_address", info: "1234 Main Street\nMinneapolis, MN 55414" },
-  { type: "facebook_handle", info: "@harryssalon" },
-  { type: "instagram_handle", info: "@harryssalon" },
-  { type: "tiktok_handle", info: "@harryssalon" },
-];
+// const contactInfo: Contact[] = [
+//   { type: "phone_number", info: "+1 (651)-467-0872" },
+//   { type: "email_address", info: "harry@harryssalon.com" },
+//   { type: "website", info: "harryssalon.com" },
+//   { type: "store_address", info: "1234 Main Street\nMinneapolis, MN 55414" },
+//   { type: "facebook_handle", info: "@harryssalon" },
+//   { type: "instagram_handle", info: "@harryssalon" },
+//   { type: "tiktok_handle", info: "@harryssalon" },
+// ];
 
-export default function UserPage() {
-  const router = useRouter();
-  const { proId } = useLocalSearchParams();
-  const [saved, setSaved] = useState(false);
-  const [selectedTab, setSelectedTab] = useState<string>("Services");
-  const [proData, setProData] = useState<ProfileProData | undefined>(undefined);
-
-  useEffect(() => {
-    fetchProfessionalData();
-  }, []);
-
-  async function fetchProfessionalData() {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select(
-        `
-        first_name, 
-        last_name, 
-        categories, 
-        services, 
-        occupations, 
-        specializations, 
-        avatar_url, 
-        feature_photo_url,
-        bio,
-        locations (
-          shop_name,
-          street_address,
-          city,
-          postal_code,
-          is_mobile
-        )
-      `,
-      )
-      .eq("id", proId)
-      .single();
-
-    if (error) {
-      throw new Error(error.message);
-    }
-    if (data) {
-      const { locations, ...rest } = data;
-
-      const normalizedLocation = Array.isArray(locations)
-        ? locations[0]
-        : locations;
-
-      setProData({
-        ...rest,
-        location: normalizedLocation ?? null,
-      });
-    }
-  }
-
-  if (!proData) return null;
-
-  const SectionHeader = ({ title, path }: { title: string; path?: string }) => {
+const SectionHeader = React.memo(
+  ({
+    title,
+    path,
+    onNavigate,
+  }: {
+    title: string;
+    path?: string;
+    onNavigate?: () => void;
+  }) => {
     return (
       <View style={styles.sectionHeaderContainer}>
         <Text style={styles.sectionHeader}>{title}</Text>
         {path && (
-          <TouchableOpacity onPress={() => router.push(path as any)}>
+          <TouchableOpacity onPress={onNavigate}>
             <Text style={styles.viewAllText}>View all</Text>
           </TouchableOpacity>
         )}
       </View>
     );
-  };
+  },
+);
 
-  const PageHeader = () => {
+const SaveButton = React.memo(
+  ({ saved, onToggle }: { saved: boolean; onToggle: () => void }) => {
+    return (
+      <TouchableOpacity onPress={onToggle}>
+        <Bookmark size={22} fill={saved ? colors.headingText : "transparent"} />
+      </TouchableOpacity>
+    );
+  },
+);
+
+const FloatingButtons = React.memo(
+  ({
+    saved,
+    onToggleSave,
+    onBack,
+  }: {
+    saved: boolean;
+    onToggleSave: () => void;
+    onBack: () => void;
+  }) => {
     return (
       <>
-        <ImageBackground
-          source={{ uri: proData.feature_photo_url }}
-          style={styles.headerImage}
-        />
+        <TouchableOpacity
+          style={[styles.floatingButton, styles.floatingButtonLeft]}
+          onPress={onBack}
+          // activeOpacity={0.8}
+        >
+          {/* <BlurView intensity={60} tint="light" style={styles.blur}> */}
+          <ChevronLeft size={22} />
+          {/* </BlurView> */}
+        </TouchableOpacity>
 
-        <View style={styles.cardDetailsContainer}>
-          <View style={styles.bubbleContainer}>
-            <View style={styles.avatarContainer}>
-              <Image
-                source={{ uri: proData.avatar_url }}
-                style={styles.avatar}
-              />
-            </View>
-            {/* <View style={styles.socialContainer}>
+        <TouchableOpacity
+          style={[styles.floatingButton, styles.floatingButtonRight]}
+          // activeOpacity={0.8}
+        >
+          {/* <BlurView intensity={60} tint="light" style={styles.blurRow}> */}
+          <SaveButton saved={saved} onToggle={onToggleSave} />
+
+          <TouchableOpacity>
+            <Ellipsis size={22} />
+          </TouchableOpacity>
+          {/* </BlurView> */}
+        </TouchableOpacity>
+      </>
+    );
+  },
+);
+
+const PageHeader = React.memo(({ proData }: { proData: ProfileProData }) => {
+  return (
+    <>
+      <ImageBackground
+        source={{ uri: proData.feature_photo_url }}
+        style={styles.headerImage}
+      />
+
+      <View style={styles.cardDetailsContainer}>
+        <View style={styles.bubbleContainer}>
+          <View style={styles.avatarContainer}>
+            <Image source={{ uri: proData.avatar_url }} style={styles.avatar} />
+          </View>
+          {/* <View style={styles.socialContainer}>
               <TouchableOpacity style={styles.socialButton}>
                 <FontAwesome5
                   name="facebook-f"
@@ -174,80 +201,228 @@ export default function UserPage() {
                 />
               </TouchableOpacity>
             </View> */}
-          </View>
-          <Text style={styles.nameLabel}>
-            {proData.first_name} {proData.last_name}
+        </View>
+        <Text style={styles.nameLabel}>
+          {proData.first_name} {proData.last_name}
+        </Text>
+        <View style={[styles.experienceContainer, { marginBottom: 2 }]}>
+          <Award size={16} color={colors.bodyText} />
+          <Text style={{ color: colors.bodyText }}>8 yrs experience</Text>
+        </View>
+        <View style={styles.experienceContainer}>
+          <MapPin size={16} color={colors.bodyText} />
+          <Text style={{ color: colors.bodyText }}>
+            {proData.location?.shop_name} • {proData.location?.city}
           </Text>
-          <View style={[styles.experienceContainer, { marginBottom: 2 }]}>
-            <Award size={16} color={colors.bodyText} />
-            <Text style={{ color: colors.bodyText }}>8 yrs experience</Text>
-          </View>
-          <View style={styles.experienceContainer}>
-            <MapPin size={16} color={colors.bodyText} />
-            <Text style={{ color: colors.bodyText }}>
-              {proData.location?.shop_name} • {proData.location?.city}
-            </Text>
-          </View>
-          <View style={styles.occupationTagContainer}>
-            {proData.occupations.map((o, i) => (
-              <OccupationTag occupation={o} key={i} />
-            ))}
+        </View>
+        <View style={styles.occupationTagContainer}>
+          {proData.occupations.map((o, i) => (
+            <OccupationTag occupation={o} key={i} />
+          ))}
+        </View>
+      </View>
+    </>
+  );
+});
+
+const BioText = React.memo(({ bio }: { bio: string }) => {
+  return <Text style={styles.aboutText}>{bio}</Text>;
+});
+
+const Portfolio = React.memo(({ urls }: { urls: string[] }) => {
+  return (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.imageRow}
+    >
+      {[...Array(5)].map((_, i) => (
+        <View style={styles.imageWrapper} key={i}>
+          <View style={styles.imageInner}>
+            <Image
+              source={{ uri: urls[i] }}
+              style={{ width: "100%", height: "100%" }}
+            />
           </View>
         </View>
-      </>
-    );
-  };
+      ))}
+    </ScrollView>
+  );
+});
 
-  const BioText = () => {
-    return <Text style={styles.aboutText}>{proData.bio}</Text>;
-  };
+const Specializations = React.memo(({ specs }: { specs: string[] }) => {
+  return (
+    <View style={styles.specializationsContainer}>
+      {specs.map((spec) => (
+        <SpecializationTag title={spec} key={spec} />
+      ))}
+    </View>
+  );
+});
 
-  const Portfolio = () => {
-    return (
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.imageRow}
-      >
-        {[...Array(5)].map((_, i) => (
-          <View style={styles.imageWrapper} key={i}>
-            <View style={styles.imageInner}>
-              <Image
-                source={require("@/assets/images/haircut1.jpg")}
-                style={{ width: "100%", height: "100%" }}
-              />
-            </View>
-          </View>
-        ))}
-      </ScrollView>
-    );
-  };
-
-  const Specializations = () => {
-    return (
-      <View style={styles.specializationsContainer}>
-        {proData.specializations.map((spec) => (
-          <SpecializationTag title={spec} key={spec} />
-        ))}
-      </View>
-    );
-  };
-
-  const Credentials = () => {
-    const count = 3;
-    const credentialCards = [...Array(count)].map((_, i) => (
+const Credentials = React.memo(
+  ({ credentials }: { credentials: Credential[] }) => {
+    // const count = 3;
+    // console.log("creds:", credentials.length)
+    const credentialCards = credentials.map((cred, i) => (
       <CredentialCard
         key={i}
-        title="Licensed Stylist"
-        org="Minnesota Board of Cosmotology"
-        year="2023"
+        title={cred.title}
+        org={cred.organization}
+        year={cred.year}
         top={i == 0}
-        bottom={i == count - 1}
+        bottom={i == credentials.length - 1}
       />
     ));
 
+    // console.log(credentialCards)
+
     return <ListContainer items={credentialCards} />;
-  };
+  },
+);
+
+const Services = React.memo(({ services }: { services: Service[] }) => {
+  const serviceCards = services.map((service, i) => (
+    <ServiceCard
+      key={i}
+      title={service.title}
+      time={service.time}
+      price={service.price}
+      top={i == 0}
+      bottom={i == services.length - 1}
+    />
+  ));
+  return <ListContainer items={serviceCards} />;
+});
+
+const Contact = React.memo(({ contacts }: { contacts: Contacts }) => {
+  const entries = Object.entries(contacts).filter(
+    (entry): entry is [string, string] => entry[1] !== null && entry[1] !== "",
+  );
+
+  console.log("contact component:", entries)
+
+  const contactCards = entries.map(([key, value], i) => (
+    <ContactCard
+      // contact={contact}
+      key={i}
+      label={key}
+      value={value}
+      top={i == 0}
+      bottom={i == entries.length - 1}
+    />
+  ));
+  return <ListContainer items={contactCards} />;
+});
+
+export default function UserPage() {
+  const router = useRouter();
+  const { proId } = useLocalSearchParams();
+  const [saved, setSaved] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<string>("Services");
+  const [proData, setProData] = useState<ProfileProData | undefined>(undefined);
+
+  const handleToggleSave = useCallback(() => setSaved((prev) => !prev), []);
+  const handleBack = useCallback(() => router.back(), [router]);
+  const handleGalleryNavigation = useCallback(() => {
+    if (!proData) return;
+    router.push({
+      pathname: `/explore/${proId}/portfolio-gallery` as any,
+      params: {
+        photos: JSON.stringify(proData.portfolio_photo_urls),
+        firstName: proData.first_name,
+      },
+    });
+  }, [router, proData, proId]);
+
+  useEffect(() => {
+    fetchProfessionalData();
+  }, []);
+
+  async function fetchProfessionalData() {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select(
+        `
+        first_name, 
+        last_name, 
+        categories, 
+        services, 
+        occupations, 
+        specializations, 
+        avatar_url, 
+        feature_photo_url,
+        bio,
+        portfolio_photo_urls,
+        locations (
+          shop_name,
+          street_address,
+          city,
+          postal_code,
+          is_mobile
+        ),
+        credentials (
+          title,
+          organization,
+          year,
+          category
+        ),
+        services (
+          title,
+          time,
+          price,
+          category
+        ),
+        contacts (
+          phone_number,
+          email_address,
+          website,
+          facebook_handle,
+          instagram_handle,
+          tiktok_handle
+        )
+      `,
+      )
+      .eq("id", proId)
+      .single();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+    if (data) {
+      const { locations, credentials, services, contacts, ...rest } = data;
+
+      const normalizedLocation = Array.isArray(locations)
+        ? locations[0]
+        : locations;
+
+      // const location = data.locations[0];
+      // console.log(normalizedLocation.street_address);
+
+      setProData({
+        ...rest,
+        location: normalizedLocation ?? null,
+        credentials: data.credentials,
+        services: data.services,
+        contacts: {
+          phone_number: data.contacts[0].phone_number || null,
+          email_address: data.contacts[0].email_address || null,
+          website: data.contacts[0].website || null,
+          store_address: normalizedLocation.street_address
+            ? `${normalizedLocation.street_address}\n${normalizedLocation.city} ${normalizedLocation.postal_code}`
+            : null,
+          facebook_handle: data.contacts[0].facebook_handle || null,
+          instagram_handle: data.contacts[0].instagram_handle || null,
+          tiktok_handle: data.contacts[0].tiktok_handle || null,
+        },
+      });
+
+      // console.log(data.contacts);
+    }
+  }
+
+  if (!proData) return null;
+  // console.log(proData.contacts)
 
   const TabBar = () => {
     return (
@@ -257,8 +432,8 @@ export default function UserPage() {
           style={[
             styles.tabBarButton,
             {
-              borderColor:
-                selectedTab === "Services" ? colors.primary : colors.cardBorder,
+              backgroundColor:
+                selectedTab === "Services" ? colors.primary : "transparent",
             },
           ]}
         >
@@ -266,8 +441,7 @@ export default function UserPage() {
             style={[
               styles.tabBarText,
               {
-                color:
-                  selectedTab === "Services" ? colors.primaryDark : "#A8938C",
+                color: selectedTab === "Services" ? "white" : colors.bodyText,
               },
             ]}
           >
@@ -303,8 +477,8 @@ export default function UserPage() {
           style={[
             styles.tabBarButton,
             {
-              borderColor:
-                selectedTab === "Contact" ? colors.primary : colors.cardBorder,
+              backgroundColor:
+                selectedTab === "Contact" ? colors.primary : "transparent",
             },
           ]}
         >
@@ -312,8 +486,7 @@ export default function UserPage() {
             style={[
               styles.tabBarText,
               {
-                color:
-                  selectedTab === "Contact" ? colors.primaryDark : "#A8938C",
+                color: selectedTab === "Contact" ? "white" : colors.bodyText,
               },
             ]}
           >
@@ -322,21 +495,6 @@ export default function UserPage() {
         </Pressable>
       </View>
     );
-  };
-
-  const Services = () => {
-    const count = 10;
-    const serviceCards = [...Array(count)].map((_, i) => (
-      <ServiceCard
-        key={i}
-        title="Haircut"
-        time="30 min"
-        price={50}
-        top={i == 0}
-        bottom={i == count - 1}
-      />
-    ));
-    return <ListContainer items={serviceCards} />;
   };
 
   const Reviews = () => {
@@ -355,74 +513,36 @@ export default function UserPage() {
     );
   };
 
-  const Contact = () => {
-    const contactCards = contactInfo.map((contact, i) => (
-      <ContactCard
-        contact={contact}
-        key={i}
-        top={i == 0}
-        bottom={i == contactInfo.length - 1}
-      />
-    ));
-    return <ListContainer items={contactCards} />;
-  };
-
-  const FloatingButtons = () => {
-    return (
-      <>
-        <TouchableOpacity
-          style={[styles.floatingButton, styles.floatingButtonLeft]}
-          onPress={() => router.back()}
-          activeOpacity={0.8}
-        >
-          <BlurView intensity={60} tint="light" style={styles.blur}>
-            <ChevronLeft size={22} />
-          </BlurView>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.floatingButton, styles.floatingButtonRight]}
-          activeOpacity={0.8}
-        >
-          <BlurView intensity={60} tint="light" style={styles.blurRow}>
-            <TouchableOpacity onPress={() => setSaved(!saved)}>
-              <Bookmark
-                size={22}
-                fill={saved ? colors.headingText : "transparent"}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity>
-              <Ellipsis size={22} />
-            </TouchableOpacity>
-          </BlurView>
-        </TouchableOpacity>
-      </>
-    );
-  };
-
   return (
     <SafeAreaView edges={[]} style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <PageHeader />
-        <BioText />
+        <PageHeader proData={proData} />
+        <BioText bio={proData.bio} />
 
-        <SectionHeader title={`${proData.first_name}'s portfolio`} path={`/explore/${proId}/portfolio-gallery`}/>
-        <Portfolio />
+        <SectionHeader
+          title={`${proData.first_name}'s portfolio`}
+          path={`/explore/${proId}/portfolio-gallery`}
+          onNavigate={handleGalleryNavigation}
+        />
+        <Portfolio urls={proData.portfolio_photo_urls} />
 
         <SectionHeader title={"Specializations"} />
-        <Specializations />
+        <Specializations specs={proData.specializations} />
 
         <SectionHeader title={"Certifications & Licenses"} />
-        <Credentials />
+        <Credentials credentials={proData.credentials} />
 
         <TabBar />
-        {selectedTab === "Services" && <Services />}
+        {selectedTab === "Services" && <Services services={proData.services} />}
         {/* {selectedTab === "Reviews" && <Reviews />} */}
-        {selectedTab === "Contact" && <Contact />}
+        {selectedTab === "Contact" && <Contact contacts={proData.contacts}/>}
       </ScrollView>
 
-      <FloatingButtons />
+      <FloatingButtons
+        saved={saved}
+        onToggleSave={handleToggleSave}
+        onBack={handleBack}
+      />
     </SafeAreaView>
   );
 }
@@ -448,9 +568,9 @@ const styles = StyleSheet.create({
   // ======================
   cardDetailsContainer: {
     backgroundColor: "white",
-    marginHorizontal: 15,
-    paddingBottom: 15,
-    marginBottom: 10,
+    marginHorizontal: 20,
+    paddingBottom: 20,
+    // marginBottom: 10,
   },
   bubbleContainer: {
     marginTop: -45,
@@ -486,7 +606,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 10,
-    marginTop: 15,
+    marginTop: 20,
   },
 
   // ======================
@@ -526,7 +646,7 @@ const styles = StyleSheet.create({
   viewAllText: {
     color: colors.bodyText,
     fontSize: fontSize.secondary,
-    fontWeight: fontWeight.regular
+    fontWeight: fontWeight.regular,
   },
   aboutText: {
     paddingHorizontal: 20,
@@ -544,7 +664,7 @@ const styles = StyleSheet.create({
   // ======================
   imageRow: {
     paddingHorizontal: 20,
-    gap: 20,
+    gap: 15,
   },
   imageWrapper: {
     height: 300,
@@ -564,26 +684,29 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: "row",
     // marginHorizontal: 15,
-    // backgroundColor: colors.cardBackground,
-    // borderRadius: 999,
-    marginTop: 10,
+    backgroundColor: colors.cardBackground,
+    borderRadius: 999,
+    marginTop: 20,
     marginHorizontal: 20,
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: colors.cardBorder,
   },
   tabBarButton: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    // borderRadius: 999,
-    // margin: 5,
+    borderRadius: 999,
+    margin: 5,
     backgroundColor: "white",
-    paddingVertical: 15,
-    borderBottomWidth: 3,
+    paddingVertical: 10,
+    // borderBottomWidth: 3,
     // borderBottomColor: colors.cardBorder
   },
   tabBarText: {
     color: "white",
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
+    fontSize: fontSize.body,
   },
 
   // ======================
@@ -617,12 +740,20 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 60,
     zIndex: 10,
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.cardBorder,
+    // opacity: 0.5
   },
   floatingButtonLeft: {
     left: 20,
   },
   floatingButtonRight: {
     right: 20,
+    flexDirection: "row",
+    gap: 10,
   },
   blur: {
     padding: 10,

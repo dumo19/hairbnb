@@ -57,7 +57,7 @@ const ExploreCard = ({ proId }: { proId: string }) => {
 
   return (
     <TouchableOpacity
-      onPress={() => router.push(`/(client)/(tabs)/explore/${proId}`)}
+      onPress={() => router.push(`/(tabs)/client/explore/${proId}`)}
       style={styles.cardTouchable}
     >
       <View style={styles.cardInner}>

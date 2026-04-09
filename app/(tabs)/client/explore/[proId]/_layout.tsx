@@ -1,4 +1,4 @@
-import { ProContext } from "@/context/pro-contex";
+import { ProContext } from "@/context/ProContext";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
 import { StyleSheet } from "react-native";

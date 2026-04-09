@@ -5,6 +5,7 @@ import {
   getSpecializationGroups,
   getSpecializationLabel,
 } from "@/constants/categories";
+import { fontSize, fontWeight } from "@/constants/fonts";
 import { colors } from "@/constants/theme";
 import { useFilterStore } from "@/lib/filter-store";
 import CategoryIcon from "@/utils/CategoryIcon";
@@ -36,7 +37,7 @@ type SpecServiceTagProp = {
   onPress: () => void;
 };
 
-const CategoryItem = ({ label, selected, onPress }: CategoryItemProp) => {
+export const CategoryItem = ({ label, selected, onPress }: CategoryItemProp) => {
   const isSelected = {
     container: styles.selectedTagContainer,
     label: styles.selectedTagLabel,
@@ -51,8 +52,8 @@ const CategoryItem = ({ label, selected, onPress }: CategoryItemProp) => {
     >
       <CategoryIcon
         category={label}
-        size={16}
-        color={selected ? colors.background : colors.mutedText}
+        size={fontSize.secondary + 2}
+        color={selected ? colors.primaryDark : colors.mutedText}
       />
       <Text style={selected ? styles.selectedTagLabel : styles.TagLabel}>
         {label}
@@ -389,30 +390,30 @@ const styles = StyleSheet.create({
   },
   TagContainer: {
     backgroundColor: colors.background,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     borderRadius: 99,
     borderWidth: 1,
     borderColor: colors.cardBorder,
   },
 
   selectedTagContainer: {
-    backgroundColor: colors.primary,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    backgroundColor: colors.primaryLight,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     borderRadius: 99,
     borderWidth: 1,
     borderColor: colors.primary,
   },
   TagLabel: {
     color: colors.mutedText,
-    fontSize: 16,
-    fontWeight: "500",
+    fontSize: fontSize.secondary,
+    fontWeight: fontWeight.medium,
   },
   selectedTagLabel: {
-    color: colors.background,
-    fontSize: 16,
-    fontWeight: "500",
+    color: colors.primaryDark,
+    fontSize: fontSize.secondary,
+    fontWeight: fontWeight.medium,
   },
   applyButton: {
     backgroundColor: colors.primary,

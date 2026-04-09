@@ -94,7 +94,7 @@ export default function ExplorePage() {
               justifyContent: "center",
               alignItems: "center",
             }}
-            onPress={() => router.push("/explore/explore-filter")}
+            onPress={() => router.push("/client/explore/explore-filter")}
           >
             <ListFilter size={21} color={colors.background} />
           </TouchableOpacity>

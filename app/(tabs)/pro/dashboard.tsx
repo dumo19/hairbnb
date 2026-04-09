@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const AccountPage = () => {
+const DashboardPage = () => {
   return (
     <View>
-      <Text>AccountPage</Text>
+      <Text>DashboardPage</Text>
     </View>
   )
 }
 
-export default AccountPage
+export default DashboardPage
 
 const styles = StyleSheet.create({})
